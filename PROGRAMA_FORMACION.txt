@@ -1,0 +1,60 @@
+                    PROGRAMA_FORMACION
+                  ┌──────────────────────┐
+                  │ cod_programa (PK)    │
+                  │ nombre               │
+                  │ tipo                 │
+                  └──────────┬───────────┘
+                             │1
+                             │
+                             │N
+                     COMPETENCIA
+                  ┌──────────────────────┐
+                  │ cod_competencia(PK)  │
+                  │ nombre               │
+                  │ descripcion          │
+                  └──────────┬───────────┘
+                             │N
+                             │
+                             │1
+                  ASIGNACION_COMPETENCIA
+             ┌───────────────────────────────┐
+             │ id_asignacion (PK)            │
+             │ fecha_inicio                  │
+             │ fecha_fin                     │
+             │ hora_inicio                   │
+             │ hora_fin                      │
+             └───────┬───────────────┬───────┘
+                     │               │
+                    N│               │N
+                     │               │
+                     │1              │1
+               INSTRUCTOR      AMBIENTE_FORMACION
+          ┌────────────────┐   ┌─────────────────┐
+          │id_instructorPK │   │cod_ambiente PK  │
+          │nombres         │   │nombre           │
+          │tipo            │   │ubicacion        │
+          │especialidad    │   └─────────────────┘
+          └───────┬────────┘
+                  │1
+                  │
+                  │N
+             CONTRATO
+         ┌────────────────┐
+         │id_contrato PK  │
+         │tipo            │
+         │fecha_inicio    │
+         │fecha_fin       │
+         │acta_inicio     │
+         └────────────────┘
+
+CURSO_COMPLEMENTARIO
+┌──────────────────────┐
+│cod_curso (PK)        │
+│nombre                │
+│duracion              │
+│empresa               │
+└──────────┬───────────┘
+           │1
+           │
+           │N
+      COMPETENCIA
