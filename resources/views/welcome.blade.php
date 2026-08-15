@@ -94,17 +94,25 @@ $planes = [
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-    .bg-custom-primary {
-        background-color: #1a252f;
-    }
+        .bg-custom-primary {
+            background-color: #1a252f;
+        }
 
-    .hover-link:hover {
-        text-decoration: underline !important;
-    }
+        .hover-link:hover {
+            text-decoration: underline !important;
+        }
 
-    .hover-opacity:hover {
-        opacity: 1 !important;
-    }
+        .hover-opacity:hover {
+            opacity: 1 !important;
+        }
+
+        /* Alineación uniforme de tarjetas en carrusel */
+        .carousel-item .card {
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
     </style>
 </head>
 
@@ -137,7 +145,7 @@ $planes = [
                             Cuenta
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{route('login')}}">Iniciar sesión</a></li>
+                            <li><a class="dropdown-item" href="{{ route('login') }}">Iniciar sesión</a></li>
                             <li><a class="dropdown-item" href="registro.php">Registrarse</a></li>
                         </ul>
                     </li>
@@ -153,18 +161,16 @@ $planes = [
         <div class="container my-3" style="max-width: 800px;">
             <h1 class="display-5 fw-bold mb-3">Estética Vehicular de Primer Nivel</h1>
             <p class="lead text-muted lh-base">
-                Somos un centro de lavado y estética vehicular de primer nivel, diseñado especialmente para los amantes
-                de
-                las dos y las cuatro ruedas. Combinamos tecnología de punta, productos de alta calidad y un equipo de
-                profesionales apasionados para garantizar que tu carro o moto luzca como recién salido del
-                concesionario.
+                Somos un centro de lavado y estética vehicular diseñado especialmente para los amantes de las dos y las
+                cuatro ruedas. Combinamos tecnología de punta, productos de alta calidad y un equipo de profesionales
+                apasionados para garantizar que tu carro o moto luzca como recién salido del concesionario.
             </p>
         </div>
     </section>
 
     <!-- 3. SECCIÓN DE PLANES Y SERVICIOS (CARRUSELES) -->
-    <div class="container my-5" style="min-height: 70vh;">
-        <div class="row g-4 justify-content-center align-items-center">
+    <main class="container my-5" style="min-height: 70vh;">
+        <div class="row g-4 justify-content-center align-items-start">
 
             <!-- Carrusel 1: Servicios -->
             <div class="col-12 col-md-6 d-flex flex-column align-items-center">
@@ -175,28 +181,29 @@ $planes = [
                     <div class="carousel-inner">
 
                         <?php foreach ($servicios as $index => $servicio): ?>
-                        <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-                            <div class="card mx-auto border-0" style="width: 100%;">
-                                <img src="<?php echo htmlspecialchars($servicio['imagen']); ?>" class="card-img-top"
-                                    alt="<?php echo htmlspecialchars($servicio['titulo']); ?>"
-                                    style="height: 180px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold"><?php echo htmlspecialchars($servicio['titulo']); ?>
-                                    </h5>
-                                    <p class="card-text text-muted small">
-                                        <?php echo htmlspecialchars($servicio['descripcion']); ?></p>
-                                </div>
-                                <ul class="list-group list-group-flush small">
-                                    <?php foreach ($servicio['items'] as $item): ?>
-                                    <li class="list-group-item"><?php echo htmlspecialchars($item); ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                <div class="card-body text-center">
-                                    <a href="<?php echo htmlspecialchars($servicio['btn_link']); ?>"
-                                        class="btn btn-primary w-100 fw-bold"><?php echo htmlspecialchars($servicio['btn_texto']); ?></a>
+                            <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                                <div class="card mx-auto border-0 w-100">
+                                    <img src="<?php echo htmlspecialchars($servicio['imagen']); ?>" class="card-img-top"
+                                        alt="<?php echo htmlspecialchars($servicio['titulo']); ?>"
+                                        style="height: 180px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold"><?php echo htmlspecialchars($servicio['titulo']); ?>
+                                        </h5>
+                                        <p class="card-text text-muted small">
+                                            <?php echo htmlspecialchars($servicio['descripcion']); ?>
+                                        </p>
+                                    </div>
+                                    <ul class="list-group list-group-flush small">
+                                        <?php foreach ($servicio['items'] as $item): ?>
+                                            <li class="list-group-item"><?php echo htmlspecialchars($item); ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <div class="card-body text-center mt-auto">
+                                        <a href="<?php echo htmlspecialchars($servicio['btn_link']); ?>"
+                                            class="btn btn-primary w-100 fw-bold"><?php echo htmlspecialchars($servicio['btn_texto']); ?></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endforeach; ?>
 
                     </div>
@@ -223,27 +230,28 @@ $planes = [
                     <div class="carousel-inner">
 
                         <?php foreach ($planes as $index => $plan): ?>
-                        <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-                            <div class="card mx-auto border-0" style="width: 100%;">
-                                <img src="<?php echo htmlspecialchars($plan['imagen']); ?>" class="card-img-top"
-                                    alt="<?php echo htmlspecialchars($plan['titulo']); ?>"
-                                    style="height: 180px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold"><?php echo htmlspecialchars($plan['titulo']); ?></h5>
-                                    <p class="card-text text-muted small">
-                                        <?php echo htmlspecialchars($plan['descripcion']); ?></p>
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                    <?php foreach ($plan['items'] as $item): ?>
-                                    <li class="list-group-item"><?php echo htmlspecialchars($item); ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                <div class="card-body text-center">
-                                    <a href="<?php echo htmlspecialchars($plan['btn_link']); ?>"
-                                        class="btn btn-primary w-100 fw-bold"><?php echo htmlspecialchars($plan['btn_texto']); ?></a>
+                            <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                                <div class="card mx-auto border-0 w-100">
+                                    <img src="<?php echo htmlspecialchars($plan['imagen']); ?>" class="card-img-top"
+                                        alt="<?php echo htmlspecialchars($plan['titulo']); ?>"
+                                        style="height: 180px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold"><?php echo htmlspecialchars($plan['titulo']); ?></h5>
+                                        <p class="card-text text-muted small">
+                                            <?php echo htmlspecialchars($plan['descripcion']); ?>
+                                        </p>
+                                    </div>
+                                    <ul class="list-group list-group-flush small">
+                                        <?php foreach ($plan['items'] as $item): ?>
+                                            <li class="list-group-item"><?php echo htmlspecialchars($item); ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <div class="card-body text-center mt-auto">
+                                        <a href="<?php echo htmlspecialchars($plan['btn_link']); ?>"
+                                            class="btn btn-primary w-100 fw-bold"><?php echo htmlspecialchars($plan['btn_texto']); ?></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endforeach; ?>
 
                     </div>
@@ -262,7 +270,7 @@ $planes = [
             </div>
 
         </div>
-    </div>
+    </main>
 
     <!-- 4. PIE DE PÁGINA (FOOTER) -->
     <footer class="bg-custom-primary text-white py-5 mt-auto">
@@ -321,7 +329,7 @@ $planes = [
         </div>
     </footer>
 
-    <!-- Bootstrap JS Bundle (con Popper.js) -->
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

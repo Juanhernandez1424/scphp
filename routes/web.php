@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\View\Components\Login;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,5 +18,5 @@ Route::get('/', function () {
 });
 
 Route::get('/login', function () {
-    return view('login');
-});
+    return view('auth.login');
+})->name('login');
