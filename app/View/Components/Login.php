@@ -23,6 +23,6 @@ class Login extends Component
      */
     public function render()
     {
-        return view('components.login');
+        return view('components.login-form');
     }
 }

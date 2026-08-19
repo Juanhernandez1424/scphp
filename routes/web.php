@@ -20,3 +20,15 @@ Route::get('/', function () {
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
+
+Route::get('/dashboard', function () {
+    return view('components.dashboard');
+})->name('dashboard');
+
+Route::get('/reservas', function () {
+    return view('reservas.index');
+})->name('reservas');
+
+Route::post('/logout', function () {
+    return redirect('/');
+})->name('logout');
