@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Telefono extends Model
 {
+    protected $table = 'telefono';
+
+    public $timestamps = false;
+
     use HasFactory;
 }

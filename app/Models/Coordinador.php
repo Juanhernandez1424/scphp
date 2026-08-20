@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coordinador extends Model
 {
+    protected $table = 'coordinador';
+
+    public $timestamps = false;
+
     use HasFactory;
 }

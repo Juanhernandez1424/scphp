@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Administrador extends Model
 {
+    protected $table = 'administrador';
+
+    public $timestamps = false;
+
     use HasFactory;
 }
