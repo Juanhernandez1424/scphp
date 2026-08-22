@@ -15,6 +15,17 @@ class Usuario extends Model
 
     protected $primaryKey = 'id_usuario';
 
+    protected $fillable = [
+        'id_usuario',
+        'tipo_documento',
+        'nombre_usuario',
+        'apellido_usuario',
+        'numero_celular',
+        'id_rol',
+        'contrasenia',
+        'estado_usuario'
+    ];
+
     public function correo()
     {
         return $this->hasOne(Correo::class, 'id_usuario', 'id_usuario');

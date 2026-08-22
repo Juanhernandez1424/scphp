@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coordinador extends Model
 {
+    use HasFactory;
+
     protected $table = 'coordinador';
 
     public $timestamps = false;
 
-    use HasFactory;
+    protected $primaryKey = 'no_documento_coordinador';
+
+    protected $fillable = ['no_documento_coordinador', 'id_usuario'];
 }

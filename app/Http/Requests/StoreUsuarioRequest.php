@@ -14,7 +14,7 @@ class StoreUsuarioRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -35,7 +35,7 @@ class StoreUsuarioRequest extends FormRequest
             'tipo_rol'           => ['required', 'string', Rule::in(['cliente', 'colaborador', 'coordinador', 'administrador'])],
             'no_documento_rol'   => 'required|integer',
             'correo_electronico' => 'required|email|max:50|unique:correo,correo_electronico',
-            'id_plan'            => 'required_if:tipo_rol,cliente|nullable|integer|exists:plan,id_plan',
+            'id_plan'            => 'nullable|integer|exists:plan,id_plan',
         ];
     }
 }
