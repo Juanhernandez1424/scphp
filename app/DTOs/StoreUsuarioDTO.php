@@ -7,6 +7,7 @@ class StoreUsuarioDTO
     public function __construct(
         public int $idUsuario,
         public string $tipoDocumento,
+        public int $noDocumentoUsuario,
         public string $nombreUsuario,
         public string $apellidoUsuario,
         public int $numeroCelular,
@@ -14,7 +15,6 @@ class StoreUsuarioDTO
         public int $idRol,
         public string $tipoRol,
         public string $correoElectronico,
-        public int $noDocumentoRol,
         public ?int $idPlan = null
     ) {}
 
@@ -24,6 +24,7 @@ class StoreUsuarioDTO
         return new self(
             idUsuario: (int)$data['id_usuario'],
             tipoDocumento: $data['tipo_documento'],
+            noDocumentoUsuario: (int)$data['no_documento_usuario'],
             nombreUsuario: $data['nombre_usuario'],
             apellidoUsuario: $data['apellido_usuario'],
             numeroCelular: (int)$data['numero_celular'],
@@ -31,7 +32,6 @@ class StoreUsuarioDTO
             idRol: (int)$data['id_rol'],
             tipoRol: strtolower($data['tipo_rol']),
             correoElectronico: $data['correo_electronico'],
-            noDocumentoRol: (int)$data['no_documento_rol'],
             idPlan: isset($data['id_plan']) ? (int)$data['id_plan'] : null
         );
     }

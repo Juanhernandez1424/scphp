@@ -74,7 +74,7 @@ class UsuarioService
             switch ($dto->tipoRol) {
                 case 'cliente':
                     Cliente::create([
-                        'no_documento_cliente' => $dto->noDocumentoRol,
+                        'no_documento_cliente' => $dto->noDocumentoUsuario,
                         'id_usuario'           => $usuario->id_usuario,
                         'id_plan'              => $dto->idPlan
                     ]);
@@ -82,21 +82,21 @@ class UsuarioService
 
                 case 'colaborador':
                     Colaborador::create([
-                        'no_documento_colaborador' => $dto->noDocumentoRol,
+                        'no_documento_colaborador' => $dto->noDocumentoUsuario,
                         'id_usuario'               => $usuario->id_usuario
                     ]);
                     break;
 
                 case 'coordinador':
                     Coordinador::create([
-                        'no_documento_coordinador' => $dto->noDocumentoRol,
+                        'no_documento_coordinador' => $dto->noDocumentoUsuario,
                         'id_usuario'               => $usuario->id_usuario
                     ]);
                     break;
 
                 case 'administrador':
                     Administrador::create([
-                        'no_documento_administrador' => $dto->noDocumentoRol,
+                        'no_documento_administrador' => $dto->noDocumentoUsuario,
                         'id_usuario'                 => $usuario->id_usuario
                     ]);
                     break;
