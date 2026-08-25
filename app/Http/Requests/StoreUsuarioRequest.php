@@ -25,7 +25,7 @@ class StoreUsuarioRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_usuario'             => 'required|integer|unique:usuario,id_usuario',
+            //'id_usuario'             => 'required|integer|unique:usuario,id_usuario',
             'tipo_documento'         => 'required|string|max:20',
             'nombre_usuario'         => 'required|string|max:20',
             'apellido_usuario'       => 'required|string|max:20',

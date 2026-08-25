@@ -5,7 +5,7 @@ namespace App\DTOs;
 class StoreUsuarioDTO
 {
     public function __construct(
-        public int $idUsuario,
+        //public int $idUsuario,
         public string $tipoDocumento,
         public int $noDocumentoUsuario,
         public string $nombreUsuario,
@@ -22,7 +22,7 @@ class StoreUsuarioDTO
     public static function fromRequest(array $data): self
     {
         return new self(
-            idUsuario: (int)$data['id_usuario'],
+            //idUsuario: (int)$data['id_usuario'],
             tipoDocumento: $data['tipo_documento'],
             noDocumentoUsuario: (int)$data['no_documento_usuario'],
             nombreUsuario: $data['nombre_usuario'],

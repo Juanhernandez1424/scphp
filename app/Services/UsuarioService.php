@@ -48,7 +48,7 @@ class UsuarioService
 
             // 1. Crear el registro principal en la tabla 'usuario'
             $usuario = Usuario::create([
-                'id_usuario'       => $dto->idUsuario,
+                //'id_usuario'       => $dto->idUsuario,
                 'tipo_documento'   => $dto->tipoDocumento,
                 'nombre_usuario'   => $dto->nombreUsuario,
                 'apellido_usuario' => $dto->apellidoUsuario,
