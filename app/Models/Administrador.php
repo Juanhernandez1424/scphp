@@ -16,4 +16,9 @@ class Administrador extends Model
     protected $primaryKey = 'no_documento_administrador';
 
     protected $fillable = ['no_documento_administrador', 'id_usuario'];
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
+    }
 }
