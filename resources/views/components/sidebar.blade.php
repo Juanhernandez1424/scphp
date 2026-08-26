@@ -1,7 +1,9 @@
 <!-- Estilos CSS para el sidebar -->
 <style>
     :root {
-        --color-primary: #212529;
+        --color-primary: #2b78e4;
+        --color-secondary: #9fc5f8;
+        --color-tertiary: #8474b0;
     }
 
     .transition-sidebar {
