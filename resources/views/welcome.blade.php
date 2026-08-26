@@ -108,7 +108,7 @@ $planes = [
 
         /* Alineación uniforme de tarjetas en carrusel */
         .carousel-item .card {
-            min-height: 520px;
+            min-block-size: 520px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -158,7 +158,7 @@ $planes = [
 
     <!-- 2. SECCIÓN HERO (DESCRIPCIÓN DE LA EMPRESA) -->
     <section class="bg-light py-5 text-center border-bottom">
-        <div class="container my-3" style="max-width: 800px;">
+        <div class="container my-3" style="max-inline-size: 600px;">
             <h1 class="display-5 fw-bold mb-3">Estética Vehicular de Primer Nivel</h1>
             <p class="lead text-muted lh-base">
                 Somos un centro de lavado y estética vehicular diseñado especialmente para los amantes de las dos y las
@@ -169,7 +169,7 @@ $planes = [
     </section>
 
     <!-- 3. SECCIÓN DE PLANES Y SERVICIOS (CARRUSELES) -->
-    <main class="container my-5" style="min-height: 70vh;">
+    <main class="container my-5" style="min-block-size: 70vh;">
         <div class="row g-4 justify-content-center align-items-start">
 
             <!-- Carrusel 1: Servicios -->
@@ -177,7 +177,7 @@ $planes = [
                 <h3 class="text-center mb-4 fw-bold">Conoce nuestros servicios</h3>
 
                 <div id="carouselServicios" class="carousel slide shadow"
-                    style="width: 100%; max-width: 24rem; border-radius: 15px; overflow: hidden;">
+                    style="inline-size: 100%; max-inline-size: 24rem; border-radius: 15px; overflow: hidden;">
                     <div class="carousel-inner">
 
                         <?php foreach ($servicios as $index => $servicio): ?>
@@ -185,7 +185,7 @@ $planes = [
                                 <div class="card mx-auto border-0 w-100">
                                     <img src="<?php echo htmlspecialchars($servicio['imagen']); ?>" class="card-img-top"
                                         alt="<?php echo htmlspecialchars($servicio['titulo']); ?>"
-                                        style="height: 180px; object-fit: cover;">
+                                        style="block-size: 180px; object-fit: cover;">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold"><?php echo htmlspecialchars($servicio['titulo']); ?>
                                         </h5>
@@ -226,7 +226,7 @@ $planes = [
                 <h3 class="text-center mb-4 fw-bold">Conoce nuestros planes</h3>
 
                 <div id="carouselPlanes" class="carousel slide shadow"
-                    style="width: 100%; max-width: 24rem; border-radius: 15px; overflow: hidden;">
+                    style="inline-size: 100%; max-inline-size: 24rem; border-radius: 15px; overflow: hidden;">
                     <div class="carousel-inner">
 
                         <?php foreach ($planes as $index => $plan): ?>
@@ -234,7 +234,7 @@ $planes = [
                                 <div class="card mx-auto border-0 w-100">
                                     <img src="<?php echo htmlspecialchars($plan['imagen']); ?>" class="card-img-top"
                                         alt="<?php echo htmlspecialchars($plan['titulo']); ?>"
-                                        style="height: 180px; object-fit: cover;">
+                                        style="block-size: 180px; object-fit: cover;">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold"><?php echo htmlspecialchars($plan['titulo']); ?></h5>
                                         <p class="card-text text-muted small">
