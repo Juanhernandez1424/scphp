@@ -16,4 +16,4 @@ class StoreClienteDTO
             idUsuario: (int)$data['id_usuario']
         );
     }
-}   
+}
