@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Administrador;
+use App\Models\Colaborador;
 
-class AdministradorService
+class ColaboradorService
 {
     public function getAll()
     {
-        return Administrador::with([
+        return Colaborador::with([
             'usuario'
         ])
         ->orderBy('id_usuario', 'desc')

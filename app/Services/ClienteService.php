@@ -10,6 +10,8 @@ class ClienteService
     {
         return Cliente::with([
             'usuario'
-        ])->get();
+        ])
+        ->orderBy('id_usuario', 'desc')
+        ->get();
     }   
 }

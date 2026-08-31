@@ -30,11 +30,11 @@ class VehiculoService
         return DB::transaction(function () use ($dto) {
             $vehiculo = Vehiculo::create([
                 'numero_placa' => $dto->numeroPlaca,
-                'noDocumentoCliente' => $dto->noDocumentoCliente,
-                'tipoVehiculo' => $dto->tipoVehiculo,
-                'colorVehiculo' => $dto->colorVehiculo,
-                'marcaVehiculo' => $dto->marcaVehiculo,
-                'modeloVehiculo' => $dto->modeloVehiculo,
+                'no_documento_cliente' => $dto->noDocumentoCliente,
+                'tipo_vehiculo' => $dto->tipoVehiculo,
+                'color_vehiculo' => $dto->colorVehiculo,
+                'marca_vehiculo' => $dto->marcaVehiculo,
+                'modelo_vehiculo' => $dto->modeloVehiculo,
                 'estado_vehiculo' => true
             ]);
 

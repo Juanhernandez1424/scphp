@@ -29,7 +29,9 @@ class UsuarioService
             'coordinador',
             'cliente',
             'colaborador'
-        ])->get();
+        ])
+        ->orderBy('id_usuario', 'desc')
+        ->get();
     }
 
 

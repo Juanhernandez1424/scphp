@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\AdministradorController;
+use App\Http\Controllers\ColaboradorController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VehiculoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,4 +29,7 @@ Route::apiResource('clientes', ClienteController::class);
 
 Route::apiResource('administradores', AdministradorController::class);
 
+Route::apiResource('colaboradores', ColaboradorController::class);
+
 Route::apiResource('vehiculos', VehiculoController::class);
+
