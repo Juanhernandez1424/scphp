@@ -6,6 +6,7 @@ use App\DTOs\StoreReservaDTO;
 use App\Http\Requests\StoreReservaRequest;
 use App\Services\ReservaService;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -71,7 +72,26 @@ class ReservaController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $reserva = $this->reservaService->getById((int)$id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Reserva obtenida correctamente',
+                'data' => $reserva
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La reserva con el ID especificado no fue encontrada',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la reserva',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

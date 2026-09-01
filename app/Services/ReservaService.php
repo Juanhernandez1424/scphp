@@ -21,6 +21,17 @@ class ReservaService
             ->get();
     }
 
+    public function getById(int $id): Reserva
+    {
+        return Reserva::with([
+            'cliente',
+            'vehiculo',
+            'colaborador',
+            'plan',
+            'servicio'
+        ])->findOrFail($id);
+    }
+
     /**
      * Registra una reserva.
      * 
