@@ -36,7 +36,7 @@
             font-family: 'PT Serif Bold', serif;
         }
 
-        .btn-cliente {
+        .btn-interna {
             background-color: #2B78E4;
             color: white;
         }
@@ -86,15 +86,15 @@
             font-size: 0.95rem;
             border-top: 1px solid #e2e8f0;
         }
+
+        .mb-3-modal {
+            margin-bottom: 1rem;
+        }
         .modal-body h2 {
             font-size: 1.1rem;
             font-weight: 600;
             color: #4a5568;
             margin-bottom: 8px;
-            margin-top: 15px;
-        }
-        .modal-body h2:first-child {
-            margin-top: 0;
         }
     </style>
 
@@ -117,7 +117,7 @@
     </div>
 
     <div class="contenedor-novedades">
-        <h2 class="subtitulo_seccion">Novedad Cliente</h2>
+        <h2 class="subtitulo_seccion">Novedad Interna</h2>
         <button type="button" class="btn-agregar-novedad" data-bs-toggle="modal" data-bs-target="#modalNovedad">Agregar Novedad</button>
     </div>
 
@@ -149,6 +149,7 @@
             </tr>
         </tbody>
     </table>
+
     <div class="modal fade" id="modalNovedad" tabindex="-1" aria-labelledby="modalNovedadLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -158,7 +159,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="mb-3">
+                        <div class="mb-3-modal">
                             <h2>Tipo de Novedad</h2>
                             <select class="form-select">
                                 <option value="1">Espacio de Trabajo</option>
@@ -167,12 +168,12 @@
                             </select>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3-modal mt-3">
                             <h2>Ticket de Novedad</h2>
                             <textarea class="form-control" rows="3"></textarea>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3-modal mt-3">
                             <h2>Colaborador</h2>
                             <select class="form-select">
                                 <option value="1">Tom Welling</option>
@@ -181,7 +182,7 @@
                             </select>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3-modal mt-3">
                             <h2>Descripcion</h2>
                             <textarea class="form-control" rows="3"></textarea>
                         </div>
@@ -189,7 +190,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary btn-sm" style="background-color: #2B78E4; border: none;">Guardar</button>
+                    <button type="button" class="btn btn-primary btn-sm" style="background-color: #2B78E4;">Guardar</button>
                 </div>
             </div>
         </div>

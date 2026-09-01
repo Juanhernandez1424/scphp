@@ -27,6 +27,12 @@ Route::get('/novedades-cliente', function(){
     return view('components.novedades-cliente');
 })-> name('novedades-cliente');
 
+Route::get('/novedades-interno', function(){
+    return view('components.novedades-interno');
+})-> name('novedades-interno');
+
+
+
 
 // Route::view('/novedades', 'components.novedades')->name('novedades');
 // Route::view('/novedades-cliente', 'components.novedades-cliente')->name('cliente');
