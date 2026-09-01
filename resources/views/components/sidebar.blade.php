@@ -65,6 +65,14 @@
                     <span class="nav-text-custom">Reservas</span>
                 </a>
             </li>
+            <li class="w-100">
+                <a href="{{ route('novedades-cliente') }}"
+                    class="nav-link px-3 align-middle text-white d-flex align-items-center {{ request()->routeIs('novedades-cliente') ? 'active' : '' }}" 
+                    style="gap: 1rem;">
+                    <i class="bi bi-bell-fill fs-2"></i>
+                    <span class="nav-text-custom">Novedades</span>
+                </a>
+            </li>
         </ul>
     </div>
 

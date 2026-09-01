@@ -23,8 +23,19 @@ Route::get('/reservas', function () {
 // Ruta diferente para la vista del formulario de creación
 Route::get('/reservas/crear', [ReservaController::class, 'create'])->name('reservas.create');
 
+Route::get('/novedades-cliente', function(){
+    return view('components.novedades-cliente');
+})-> name('novedades-cliente');
+
+Route::get('/novedades-interno', function(){
+    return view('components.novedades-interno');
+})-> name('novedades-interno');
 
 
+
+
+// Route::view('/novedades', 'components.novedades')->name('novedades');
+// Route::view('/novedades-cliente', 'components.novedades-cliente')->name('cliente');
 
 
 
@@ -34,4 +45,3 @@ Route::get('/reservas/crear', [ReservaController::class, 'create'])->name('reser
 Route::post('/logout', function () {
     return redirect('/');
 })->name('logout');
-
