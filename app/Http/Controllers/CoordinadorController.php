@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ColaboradorService;
+use App\Services\CoordinadorService;
 use Exception;
 use Illuminate\Http\Request;
 
-class ColaboradorController extends Controller
+class CoordinadorController extends Controller
 {
     public function __construct(
-        protected ColaboradorService $colaboradorService
+        protected CoordinadorService $coordinadorService
     ) {}
     /**
      * Display a listing of the resource.
@@ -19,29 +19,19 @@ class ColaboradorController extends Controller
     public function index()
     {
         try {
-            $colaboradores = $this->colaboradorService->getAll();
+            $coordinadores = $this->coordinadorService->getAll();
             return response()->json([
                 'success' => true,
-                'message' => 'Listado de colaboradores consultado con éxito',
-                'data' => $colaboradores
+                'message' => 'Listado de coordinadores consultado con éxito',
+                'data' => $coordinadores
             ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Hubo un error consultando los colaboradores',
+                'message' => 'Hubo un error consultando los coordinadores',
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -62,17 +52,6 @@ class ColaboradorController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
     {
         //
     }

@@ -2,17 +2,17 @@
 
 namespace App\DTOs;
 
-class StoreColaboradorDTO
+class StoreCoordinadorDTO
 {
     public function __construct(
-        public int $numeroDocumentoColaborador,
+        public int $numeroDocumentoCoordinador,
         public int $idUsuario
     ) {}
 
     public static function fromRequest(array $data): self
     {
         return new self(
-            numeroDocumentoColaborador: (int)$data['no_documento_colaborador'],
+            numeroDocumentoCoordinador: (int)$data['no_documento_coordinador'],
             idUsuario: (int)$data['id_usuario']
         );
     }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\DTOs\StoreVehiculoDTO;
-use App\Http\Requests\StoreVehiculoRequest;
 use App\Models\Vehiculo;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +24,7 @@ class VehiculoService
      * @return Vehiculo
      * @throws Exception
      */
-    public function registrarVehiculo(StoreVehiculoRequest $dto): Vehiculo
+    public function registrarVehiculo(StoreVehiculoDTO $dto): Vehiculo
     {
         return DB::transaction(function () use ($dto) {
             $vehiculo = Vehiculo::create([
