@@ -5,7 +5,7 @@ namespace App\DTOs;
 class StoreVehiculoDTO
 {
     public function __construct(
-        public string $numeroPlaca,
+        public string $placaVehiculo,
         public int $noDocumentoCliente,
         public string $tipoVehiculo,
         public string $colorVehiculo,
@@ -16,7 +16,7 @@ class StoreVehiculoDTO
     public static function fromRequest(array $data): self
     {
         return new self(
-            numeroPlaca: $data['numero_placa'],
+            placaVehiculo: $data['placa_vehiculo'],
             noDocumentoCliente: (int)$data['no_documento_cliente'],
             tipoVehiculo: $data['tipo_vehiculo'],
             colorVehiculo: $data['color_vehiculo'],

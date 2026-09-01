@@ -13,7 +13,7 @@ class StoreReservaRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,15 @@ class StoreReservaRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'no_documento_cliente' => 'required|int',
+            'placa_vehiculo' => 'required|string',
+            'no_documento_colaborador' => 'required|int',
+            'fecha' => 'required|date',
+            'hora' => 'required|date_format:H:i',
+            'id_plan' => 'required|int',
+            'id_servicio' => 'required|int',
+            'etapa_lavado' => 'nullable|string',
+            'fotos_vehiculo' => 'required|string'
         ];
     }
 }

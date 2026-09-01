@@ -16,4 +16,9 @@ class Colaborador extends Model
     protected $primaryKey = 'no_documento_colaborador';
 
     protected $fillable = ['no_documento_colaborador', 'id_usuario'];
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
+    }
 }

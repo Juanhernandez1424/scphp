@@ -24,7 +24,7 @@ class StoreVehiculoRequest extends FormRequest
     public function rules()
     {
         return [
-            'numero_placa' => 'required|string|max:10',
+            'placa_vehiculo' => 'required|string|max:10',
             'no_documento_cliente' => 'required|int',
             'tipo_vehiculo' => 'required|string',
             'color_vehiculo' => 'string',

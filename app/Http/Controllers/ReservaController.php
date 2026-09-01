@@ -2,49 +2,98 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\StoreReservaDTO;
+use App\Http\Requests\StoreReservaRequest;
+use App\Services\ReservaService;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ReservaController extends Controller
 {
-    public function create(Request $request)
+    public function __construct(
+        protected ReservaService $reservaService
+    ) {}
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(): JsonResponse
     {
-        $cliente = null;
-
-        // Lista de clientes quemados (Mock Data)
-        $clientesQuemados = [
-            [
-                'id' => 1,
-                'tipo_documento' => 'CC',
-                'documento' => '1098765432',
-                'nombre' => 'María García',
-                'telefono' => '3201234567',
-                'placa' => 'ABC-123'
-            ],
-            [
-                'id' => 2,
-                'tipo_documento' => 'CE',
-                'documento' => '987654321',
-                'nombre' => 'Carlos López',
-                'telefono' => '3109876543',
-                'placa' => 'XYZ-789'
-            ]
-        ];
-
-        // Buscar el cliente en la lista quemada si se enviaron los campos
-        if ($request->filled('tipo_doc') && $request->filled('num_doc')) {
-            
-            foreach ($clientesQuemados as $c) {
-                if ($c['tipo_documento'] === $request->tipo_doc && $c['documento'] === $request->num_doc) {
-                    $cliente = (object) $c; // Convertimos a objeto para acceder con $cliente->nombre en Blade
-                    break;
-                }
-            }
-
-            if (!$cliente) {
-                session()->now('error', 'Cliente no encontrado.');
-            }
+        try {
+            $reservas = $this->reservaService->getAll();
+            return response()->json([
+                'success' => true,
+                'message' => 'Lista de reservas obtenida correctamente',
+                'data' => $reservas
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la lista de reservas',
+                'error' => $e->getMessage()
+            ], 500);
         }
+    }
 
-        return view('reservas.reservas', compact('cliente'));
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreReservaRequest $request): JsonResponse
+    {
+        try {
+            $dto = StoreReservaDTO::fromRequest($request->validated());
+
+            $reserva = $this->reservaService->registrarReserva($dto);
+            return response()->json([
+                'success' => true,
+                'message' => 'Reserva creada correctamente',
+                'data' => $reserva
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear la reserva',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
     }
 }
