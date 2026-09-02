@@ -7,6 +7,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CoordinadorController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\NovedadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,3 +39,5 @@ Route::apiResource('coordinadores', CoordinadorController::class);
 Route::apiResource('vehiculos', VehiculoController::class);
 
 Route::apiResource('reservas', ReservaController::class);
+
+Route::apiResource('novedades', NovedadController::class);

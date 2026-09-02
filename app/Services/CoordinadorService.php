@@ -14,4 +14,11 @@ class CoordinadorService
             ->orderBy('id_usuario', 'desc')
             ->get();
     }
+
+    public function getById(string $noDocumentoCoordinador): Coordinador
+    {
+        return Coordinador::with([
+            'usuario'
+        ])->findOrFail($noDocumentoCoordinador);
+    }
 }

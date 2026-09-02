@@ -16,6 +16,12 @@ class VehiculoService
         ])->get();
     }
 
+    public function getById(string $placaVehiculo): Vehiculo
+    {
+        return Vehiculo::with([
+            'usuario'
+        ])->findOrFail($placaVehiculo);
+    }
 
     /**
      * Registra un vehiculo asociado a un cliente.

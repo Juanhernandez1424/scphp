@@ -13,5 +13,12 @@ class ColaboradorService
         ])
         ->orderBy('id_usuario', 'desc')
         ->get();
-    }   
+    }
+
+    public function getById(string $noDocumentoColaborador): Colaborador
+    {
+        return Colaborador::with([
+            'usuario'
+        ])->findOrFail($noDocumentoColaborador);
+    }
 }

@@ -34,7 +34,18 @@ class UsuarioService
         ->get();
     }
 
-
+    public function getById(int $idUsuario)
+    {
+        return Usuario::with([
+            'correo',
+            'telefono',
+            'administrador',
+            'coordinador',
+            'cliente',
+            'colaborador'
+        ])
+        ->findOrFail($idUsuario);
+    }
 
     /**
      * Registra un usuario y su rol correspondiente de forma atómica.

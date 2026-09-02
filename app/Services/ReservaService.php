@@ -21,7 +21,7 @@ class ReservaService
             ->get();
     }
 
-    public function getById(int $id): Reserva
+    public function getById(int $idReserva): Reserva
     {
         return Reserva::with([
             'cliente',
@@ -29,7 +29,7 @@ class ReservaService
             'colaborador',
             'plan',
             'servicio'
-        ])->findOrFail($id);
+        ])->findOrFail($idReserva);
     }
 
     /**

@@ -65,7 +65,27 @@ class AdministradorController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $administrador = $this->administradorService->getById($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Administrador consultado con éxito',
+                'data' => $administrador
+            ], 200);
+        } catch(ModelNotFoundException $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Administrador no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error consultando el administrador',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

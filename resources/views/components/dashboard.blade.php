@@ -1,3 +1,5 @@
+@props(['withSidebar' => true])
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -14,10 +16,11 @@
     <div class="container-fluid">
         <div class="row flex-nowrap">
 
-            <x-sidebar />
+            @if($withSidebar)
+                <x-sidebar />
+            @endif
 
             <main class="col py-3">
-                <p>El contenido de tu página va aquí...</p>
             </main>
 
         </div>

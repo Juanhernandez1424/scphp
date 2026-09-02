@@ -29,7 +29,7 @@ class StoreUsuarioRequest extends FormRequest
             'tipo_documento'         => 'required|string|max:20',
             'nombre_usuario'         => 'required|string|max:20',
             'apellido_usuario'       => 'required|string|max:20',
-            'numero_celular'         => 'required|integer',
+            'numero_celular'         => 'required|string|max:11',
             'id_rol'                 => 'required|integer|exists:rol,id_rol',
             'contrasenia'            => 'required|string|min:6|max:20',
             'tipo_rol'               => ['required', 'string', Rule::in(['cliente', 'colaborador', 'coordinador', 'administrador'])],

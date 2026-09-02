@@ -31,8 +31,21 @@ Route::get('/novedades-interno', function(){
     return view('components.novedades-interno');
 })-> name('novedades-interno');
 
+Route::get('/gerencia', function(){
+    return view('gerencia.gerencia');
+})-> name('gerencia');
 
+Route::get('/gerencia/clientes', function(){
+    return view('gerencia.gerencia');
+})-> name('gerencia.clientes');
 
+Route::get('/gerencia/colaboradores', function(){
+    return view('gerencia.gerencia');
+})-> name('gerencia.colaboradores');
+
+Route::get('/gerencia/servicios', function(){
+    return view('gerencia.gerencia');
+})-> name('gerencia.servicios');
 
 // Route::view('/novedades', 'components.novedades')->name('novedades');
 // Route::view('/novedades-cliente', 'components.novedades-cliente')->name('cliente');

@@ -73,6 +73,14 @@
                     <span class="nav-text-custom">Novedades</span>
                 </a>
             </li>
+            <li class="w-100">
+                <a href="{{ route('gerencia.clientes') }}"
+                    class="nav-link px-3 align-middle text-white d-flex align-items-center {{ request()->routeIs('gerencia.clientes') ? 'active' : '' }}" 
+                    style="gap: 1rem;">
+                    <i class="bi bi-bell-fill fs-2"></i>
+                    <span class="nav-text-custom">Gerencia</span>
+                </a>
+            </li>
         </ul>
     </div>
 

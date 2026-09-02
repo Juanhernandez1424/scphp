@@ -86,7 +86,27 @@ class VehiculoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try{
+            $vehiculo = $this->vehiculoService->getById($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Vehículo consultado con éxito',
+                'data' => $vehiculo
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vehículo no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Hubo un error consultando el vehículo',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

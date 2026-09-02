@@ -74,7 +74,27 @@ class UsuarioController extends Controller
      */
     public function show($id)
     {
-        //
+        try{
+            $usuario = $this->usuarioService->getById($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario consultado con éxito',
+                'data' => $usuario
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        }catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error consultando el usuario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

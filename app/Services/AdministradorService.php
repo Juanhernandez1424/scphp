@@ -13,5 +13,12 @@ class AdministradorService
         ])
         ->orderBy('id_usuario', 'desc')
         ->get();
-    }   
+    }
+
+    public function getById(string $noDocumentoAdministrador): Administrador
+    {
+        return Administrador::with([
+            'usuario'
+        ])->findOrFail($noDocumentoAdministrador);
+    }
 }

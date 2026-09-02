@@ -10,7 +10,7 @@ class StoreReservaDTO
         public int $noDocumentoColaborador,
         public string $fecha,
         public string $hora,
-        public int $idPlan,
+        public ?int $idPlan,
         public int $idServicio,
         public string $etapaLavado,
         public string $fotosVehiculo
@@ -25,7 +25,8 @@ class StoreReservaDTO
             noDocumentoColaborador: (int)$data['no_documento_colaborador'],
             fecha: $data['fecha'],
             hora: $data['hora'],
-            idPlan: (int)$data['id_plan'],
+            idPlan: $data['id_plan'] !== null 
+            ? (int)$data['id_plan'] : null,
             idServicio: (int)$data['id_servicio'],
             etapaLavado: $data['etapa_lavado'] ?? 'Pendiente',
             fotosVehiculo: $data['fotos_vehiculo']

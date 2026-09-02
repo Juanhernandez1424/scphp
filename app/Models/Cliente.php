@@ -21,4 +21,9 @@ class Cliente extends Model
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
     }
+
+    public function vehiculo()
+    {
+        return $this->hasMany(Vehiculo::class, 'no_documento_cliente', 'no_documento_cliente');
+    }
 }

@@ -10,6 +10,7 @@ class StoreNovedadDTO
         public string $ticketNovedad,
         public int $noDocumentoColaborador,
         public int $noDocumentoCliente,
+        public string $etapoNovedad,
         public int $idReserva
     ) {}
 
@@ -22,6 +23,7 @@ class StoreNovedadDTO
             ticketNovedad: $data['ticket_novedad'],
             noDocumentoColaborador: (int)$data['no_documento_colaborador'],
             noDocumentoCliente: (int)$data['no_documento_cliente'],
+            etapoNovedad: $data['etapo_novedad'],
             idReserva: (int)$data['id_reserva']
         );
     }

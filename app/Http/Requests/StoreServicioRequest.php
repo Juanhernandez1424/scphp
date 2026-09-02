@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreNovedadRequest extends FormRequest
+class StoreServicioRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StoreNovedadRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,13 +24,7 @@ class StoreNovedadRequest extends FormRequest
     public function rules()
     {
         return [
-            'tipo_novedad' => 'required|string',
-            'descripcion_novedad' => 'required|string',
-            'ticket_novedad' => 'required|string',
-            'no_documento_colaborador' => 'required|int',
-            'no_documento_cliente' => 'required|int',
-            'etapo_novedad' => 'string',
-            'id_reserva' => 'required|int'
+            //
         ];
     }
 }

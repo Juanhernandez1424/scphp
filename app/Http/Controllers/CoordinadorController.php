@@ -53,7 +53,26 @@ class CoordinadorController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $coordinador = $this->coordinadorService->getById($id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Coordinador consultado con éxito',
+                'data' => $coordinador
+            ], 200);
+        } catch (ModelNotFoundException $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Coordinador no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        }catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error consultando el coordinador',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

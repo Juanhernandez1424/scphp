@@ -63,7 +63,26 @@ class ColaboradorController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $colaborador = $this->colaboradorService->getById($id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Colaborador consultado con éxito',
+                'data' => $colaborador
+            ], 200);
+        } catch(ModelNotFoundException $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error consultando el colaborador',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error consultando el colaborador',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

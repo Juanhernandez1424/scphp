@@ -29,7 +29,7 @@ class StoreReservaRequest extends FormRequest
             'no_documento_colaborador' => 'required|int',
             'fecha' => 'required|date',
             'hora' => 'required|date_format:H:i',
-            'id_plan' => 'required|int',
+            'id_plan' => 'nullable|int',
             'id_servicio' => 'required|int',
             'etapa_lavado' => 'nullable|string',
             'fotos_vehiculo' => 'required|string'

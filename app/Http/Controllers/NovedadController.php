@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\StoreNovedadDTO;
+use App\Http\Requests\StoreNovedadRequest;
 use App\Services\NovedadService;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NovedadController extends Controller
@@ -41,9 +45,24 @@ class NovedadController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreNovedadRequest $request): JsonResponse
     {
-        //
+        try{
+            $dto = StoreNovedadDTO::fromRequest($request->validated());
+
+            $novedads = $this->novedadService->registrarNovedad($dto);
+            return response()->json([
+                'success' => true,
+                'message' => 'Novedad registrada correctamente',
+                'data' => $novedads
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar la novedad',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -54,7 +73,26 @@ class NovedadController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $novedad = $this->novedadService->getById($id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Novedad obtenida correctamente',
+                'data' => $novedad
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Novedad no encontrada',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la novedad',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

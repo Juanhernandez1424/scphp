@@ -9,9 +9,18 @@ class ClienteService
     public function getAll()
     {
         return Cliente::with([
-            'usuario'
+            'usuario',
+            'vehiculo'
         ])
-        ->orderBy('id_usuario', 'desc')
-        ->get();
-    }   
+            ->orderBy('id_usuario', 'desc')
+            ->get();
+    }
+
+    public function getById(string $noDocumentoCliente): Cliente
+    {
+        return Cliente::with([
+            'usuario',
+            'vehiculo'
+        ])->findOrFail($noDocumentoCliente);
+    }
 }
