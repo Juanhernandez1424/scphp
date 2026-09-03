@@ -8,6 +8,7 @@ use App\Http\Controllers\CoordinadorController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\NovedadController;
+use App\Http\Controllers\TipoVehiculoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,3 +42,5 @@ Route::apiResource('vehiculos', VehiculoController::class);
 Route::apiResource('reservas', ReservaController::class);
 
 Route::apiResource('novedades', NovedadController::class);
+
+Route::apiResource('tipo_vehiculo', TipoVehiculoController::class);

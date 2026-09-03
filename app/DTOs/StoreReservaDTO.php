@@ -12,6 +12,7 @@ class StoreReservaDTO
         public string $hora,
         public ?int $idPlan,
         public int $idServicio,
+        public int $idTipoVehiculo,
         public string $etapaLavado,
         public string $fotosVehiculo
     ) {}
@@ -25,9 +26,10 @@ class StoreReservaDTO
             noDocumentoColaborador: (int)$data['no_documento_colaborador'],
             fecha: $data['fecha'],
             hora: $data['hora'],
-            idPlan: $data['id_plan'] !== null 
-            ? (int)$data['id_plan'] : null,
+            idPlan: $data['id_plan'] !== null
+                ? (int)$data['id_plan'] : null,
             idServicio: (int)$data['id_servicio'],
+            idTipoVehiculo: (int)$data['id_tipo_vehiculo'],
             etapaLavado: $data['etapa_lavado'] ?? 'Pendiente',
             fotosVehiculo: $data['fotos_vehiculo']
         );

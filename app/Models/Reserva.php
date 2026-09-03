@@ -24,6 +24,7 @@ class Reserva extends Model
         'hora',
         'id_plan',
         'id_servicio',
+        'id_tipo_vehiculo',
         'etapa_lavado',
         'fotos_vehiculo',
         'estado_reserva'
@@ -52,5 +53,10 @@ class Reserva extends Model
     public function servicio()
     {
         return $this->belongsTo(Servicio::class, 'id_servicio', 'id_servicio');
+    }
+
+    public function tipoVehiculo()
+    {
+        return $this->belongsTo(TipoVehiculo::class, 'id_tipo_vehiculo', 'id_tipo_vehiculo');
     }
 }

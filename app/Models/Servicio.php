@@ -14,4 +14,17 @@ class Servicio extends Model
     public $timestamps = false;
 
     protected $primaryKey = 'id_servicio';
+
+    protected $fillable = [
+        'id_servicio',
+        'nombre_servicio',
+        'id_tipo_vehiculo',
+        'descripcion_servicio',
+        'costo_servicio'
+    ];
+
+    public function tipoVehiculo()
+    {
+        return $this->belongsTo(TipoVehiculo::class, 'id_tipo_vehiculo', 'id_tipo_vehiculo');
+    }
 }

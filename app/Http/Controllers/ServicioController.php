@@ -2,18 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ServicioService;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ServicioController extends Controller
 {
+    public function __construct(
+        protected ServicioService $servicioService
+    ) {}
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        try {
+            $servicios = $this->servicioService->getAll();
+            return response()->json([
+                'success' => true,
+                'message' => 'Servicios obtenidos correctamente',
+                'data' => $servicios
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los servicios',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -21,9 +40,21 @@ class ServicioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): JsonResponse
     {
-        //
+        try {
+            return response()->json([
+                'success' => true,
+                'message' => 'Formulario de creación de servicio',
+                'data' => null
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al mostrar el formulario de creación de servicio',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

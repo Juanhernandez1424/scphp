@@ -15,7 +15,8 @@ class ReservaService
             'vehiculo',
             'colaborador',
             'plan',
-            'servicio'
+            'servicio',
+            'tipo_vehiculo'
         ])
             ->orderBy('id_reserva', 'desc')
             ->get();
@@ -28,7 +29,8 @@ class ReservaService
             'vehiculo',
             'colaborador',
             'plan',
-            'servicio'
+            'servicio',
+            'tipo_vehiculo'
         ])->findOrFail($idReserva);
     }
 
@@ -50,6 +52,7 @@ class ReservaService
                 'hora' => $dto->hora,
                 'id_plan' => $dto->idPlan,
                 'id_servicio' => $dto->idServicio,
+                'id_tipo_vehiculo' => $dto->idTipoVehiculo,
                 'etapa_lavado' => $dto->etapaLavado ?? 'Pendiente',
                 'fotos_vehiculo' => $dto->fotosVehiculo,
                 'estado_lavado' => true

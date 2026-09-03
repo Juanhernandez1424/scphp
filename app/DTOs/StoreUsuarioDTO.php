@@ -5,7 +5,6 @@ namespace App\DTOs;
 class StoreUsuarioDTO
 {
     public function __construct(
-        //public int $idUsuario,
         public string $tipoDocumento,
         public int $noDocumentoUsuario,
         public string $nombreUsuario,
