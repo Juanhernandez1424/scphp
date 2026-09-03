@@ -184,7 +184,7 @@
 
                         <div class="mb-3-modal mt-3">
                             <h2>Descripcion</h2>
-                            <textarea class="form-control" rows="3"></textarea>
+                            <input class="form-control" rows="3"></input>
                         </div>
                     </form>
                 </div>
