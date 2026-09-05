@@ -283,7 +283,7 @@
             no_documento_usuario: documento,
             numero_celular: telefono,
             correo_electronico: email,
-            id_rol: 1,
+            id_rol: 4,
             contrasenia: 'empleado123',
             tipo_rol: 'colaborador',
             estado_usuario: true,

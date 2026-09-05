@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\StoreServicioDTO;
+use App\Http\Requests\StoreServicioRequest;
 use App\Services\ServicioService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -36,36 +38,30 @@ class ServicioController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(): JsonResponse
-    {
-        try {
-            return response()->json([
-                'success' => true,
-                'message' => 'Formulario de creación de servicio',
-                'data' => null
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al mostrar el formulario de creación de servicio',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreServicioRequest $request): JsonResponse
     {
-        //
+        try {
+            $dto = StoreServicioDTO::fromRequest($request->validated());
+
+            $servicio = $this->servicioService->registrarServicio($dto);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Servicio creado correctamente',
+                'data' => $servicio
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el servicio',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

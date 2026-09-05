@@ -12,14 +12,14 @@ class VehiculoService
     public function getAll()
     {
         return Vehiculo::with([
-            'usuario'
+            'cliente'
         ])->get();
     }
 
     public function getById(string $placaVehiculo): Vehiculo
     {
         return Vehiculo::with([
-            'usuario'
+            'cliente'
         ])->findOrFail($placaVehiculo);
     }
 
@@ -36,7 +36,7 @@ class VehiculoService
             $vehiculo = Vehiculo::create([
                 'placa_vehiculo' => $dto->placaVehiculo,
                 'no_documento_cliente' => $dto->noDocumentoCliente,
-                'tipo_vehiculo' => $dto->tipoVehiculo,
+                'id_tipo_vehiculo' => $dto->idTipoVehiculo,
                 'color_vehiculo' => $dto->colorVehiculo,
                 'marca_vehiculo' => $dto->marcaVehiculo,
                 'modelo_vehiculo' => $dto->modeloVehiculo,

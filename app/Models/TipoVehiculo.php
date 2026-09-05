@@ -18,6 +18,12 @@ class TipoVehiculo extends Model
     protected $fillable = [
         'id_tipo_vehiculo',
         'nombre_tipo_vehiculo',
-        'estado_tipo_vehiculo'
+        'estado_tipo_vehiculo',
+        'servicio'
     ];
+
+    public function servicio()
+    {
+        return $this->hasMany(Servicio::class, 'id_tipo_vehiculo', 'id_tipo_vehiculo');
+    }
 }

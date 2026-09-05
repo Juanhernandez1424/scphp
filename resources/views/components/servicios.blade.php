@@ -71,11 +71,6 @@
                         <input type="text" class="form-control" id="nombreTipoVehiculo"
                             placeholder="Ej: Automovil, Camioneta, Moto">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Descripción</label>
-                        <textarea class="form-control" id="descripcionTipoVehiculo" rows="2"
-                            placeholder="Descripción del tipo de vehículo"></textarea>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -138,7 +133,6 @@
             });
 
             const result = await response.json();
-            console.log('📥 Tipos de vehículo:', result);
 
             if (!response.ok) {
                 throw new Error(result.message || 'Error al cargar los tipos de vehículo');
@@ -180,60 +174,62 @@
 
         let html = '';
         tipos.forEach(tipo => {
-            const servicios = tipo.servicios || [];
+            // 👇 Cambiar de 'servicio' a 'servicios' si cambiaste la relación
+            const servicios = tipo.servicio || [];
             const totalServicios = servicios.length;
 
             html += `
-                <div class="card mb-3">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="mb-0"><strong>${tipo.nombre_tipo_vehiculo || 'Sin nombre'}</strong></h6>
-                            <small class="text-muted">${totalServicios} servicio${totalServicios !== 1 ? 's' : ''}</small>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-primary" onclick="abrirModalAgregarServicio(${tipo.id_tipo_vehiculo})">
-                                <i class="bi bi-plus-circle me-1"></i>Agregar Servicio
-                            </button>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleServicios(${tipo.id_tipo_vehiculo})">
-                                <i class="bi bi-chevron-down" id="icon_${tipo.id_tipo_vehiculo}"></i>
-                            </button>
-                        </div>
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0"><strong>${tipo.nombre_tipo_vehiculo || 'Sin nombre'}</strong></h6>
+                        <small class="text-muted">${totalServicios} servicio${totalServicios !== 1 ? 's' : ''}</small>
                     </div>
-                    <div class="card-body" id="servicios_${tipo.id_tipo_vehiculo}" style="display: none;">
-                        ${totalServicios > 0 ? `
-                            ${servicios.map(servicio => `
-                                <div class="border-bottom pb-2 mb-2">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1"><strong>${servicio.nombre_servicio || 'Sin nombre'}</strong></h6>
-                                            <p class="small text-muted mb-1">${servicio.descripcion_servicio || 'Sin descripción'}</p>
-                                            <span class="badge bg-success">$ ${Number(servicio.precio_servicio || 0).toLocaleString()}</span>
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="editarServicio(${servicio.id_servicio})">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarServicio(${servicio.id_servicio})">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        ` : `
-                            <p class="text-muted text-center mb-0">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Este tipo de vehículo no tiene servicios asociados
-                            </p>
-                        `}
-                        <div class="mt-2">
-                            <button class="btn btn-outline-primary btn-sm w-100" onclick="abrirModalAgregarServicio(${tipo.id_tipo_vehiculo})">
-                                <i class="bi bi-plus-circle me-1"></i>Agregar Servicio
-                            </button>
-                        </div>
+                    <div>
+                        <button class="btn btn-sm btn-primary" onclick="abrirModalAgregarServicio(${tipo.id_tipo_vehiculo})">
+                            <i class="bi bi-plus-circle me-1"></i>Agregar Servicio
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="toggleServicios(${tipo.id_tipo_vehiculo})">
+                            <i class="bi bi-chevron-down" id="icon_${tipo.id_tipo_vehiculo}"></i>
+                        </button>
                     </div>
                 </div>
-            `;
+                <div class="card-body" id="servicios_${tipo.id_tipo_vehiculo}" style="display: none;">
+                    ${totalServicios > 0 ? `
+                        ${servicios.map(servicio => `
+                            <div class="border-bottom pb-2 mb-2">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1"><strong>${servicio.nombre_servicio || 'Sin nombre'}</strong></h6>
+                                        <p class="small text-muted mb-1">${servicio.descripcion_servicio || 'Sin descripción'}</p>
+                                        <span class="badge bg-success">$ ${Number(servicio.costo_servicio || 0).toLocaleString()}</span>
+                                        <!-- 👆 Cambiado de precio_servicio a costo_servicio -->
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editarServicio(${servicio.id_servicio})">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarServicio(${servicio.id_servicio})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    ` : `
+                        <p class="text-muted text-center mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Este tipo de vehículo no tiene servicios asociados
+                        </p>
+                    `}
+                    <div class="mt-2">
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="abrirModalAgregarServicio(${tipo.id_tipo_vehiculo})">
+                            <i class="bi bi-plus-circle me-1"></i>Agregar Servicio
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
         });
 
         listaContainer.innerHTML = html;
@@ -277,10 +273,10 @@
         }
 
         const payload = {
-            id_tipo_vehiculo: parseInt(idTipoVehiculo),
             nombre_servicio: nombre,
-            precio_servicio: parseFloat(precio),
-            descripcion_servicio: descripcion || null
+            id_tipo_vehiculo: parseInt(idTipoVehiculo),
+            descripcion_servicio: descripcion || null,
+            costo_servicio: parseFloat(precio)
         };
 
         try {
@@ -299,7 +295,7 @@
                 throw new Error(result.message || 'No se pudo crear el servicio');
             }
 
-            alert('✅ Servicio agregado correctamente');
+            alert('Servicio agregado correctamente');
 
             const modal = bootstrap.Modal.getInstance(document.getElementById('agregarServicioModal'));
             if (modal) modal.hide();
@@ -308,7 +304,7 @@
 
         } catch (error) {
             console.error('Error:', error);
-            alert('❌ Error: ' + error.message);
+            alert('Error: ' + error.message);
         }
     }
 
@@ -343,7 +339,7 @@
                 throw new Error(result.message || 'No se pudo crear el tipo de vehículo');
             }
 
-            alert('✅ Tipo de vehículo agregado correctamente');
+            alert('Tipo de vehículo agregado correctamente');
 
             const modal = bootstrap.Modal.getInstance(document.getElementById('agregarTipoVehiculoModal'));
             if (modal) modal.hide();
@@ -353,7 +349,7 @@
 
         } catch (error) {
             console.error('Error:', error);
-            alert('❌ Error: ' + error.message);
+            alert('Error: ' + error.message);
         }
     }
 

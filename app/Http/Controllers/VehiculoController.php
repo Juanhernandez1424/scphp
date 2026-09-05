@@ -86,7 +86,7 @@ class VehiculoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
             $vehiculo = $this->vehiculoService->getById($id);
 
             return response()->json([
@@ -102,7 +102,7 @@ class VehiculoController extends Controller
             ], 404);
         } catch (Exception $e) {
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Hubo un error consultando el vehículo',
                 'error' => $e->getMessage()
             ], 500);

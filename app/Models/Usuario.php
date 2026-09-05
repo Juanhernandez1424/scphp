@@ -55,4 +55,16 @@ class Usuario extends Model
     {
         return $this->hasOne(Administrador::class, 'id_usuario', 'id_usuario');
     }
+
+    public function vehiculo()
+    {
+        return $this->hasManyThrough(
+            Vehiculo::class,
+            Cliente::class,
+            'id_usuario',
+            'no_documento_cliente',
+            'id_usuario',
+            'no_documento_cliente'
+        );
+    }
 }

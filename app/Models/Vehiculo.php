@@ -18,14 +18,19 @@ class Vehiculo extends Model
     protected $fillable = [
         'placa_vehiculo',
         'no_documento_cliente',
-        'tipo_vehiculo',
+        'id_tipo_vehiculo',
         'color_vehiculo',
         'marca_vehiculo',
         'modelo_vehiculo'
     ];
 
-    public function usuario()
+    public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'no_documento_cliente', 'no_documento_cliente');
+    }
+
+    public function tipoVehiculo()
+    {
+        return $this->belongsTo(TipoVehiculo::class, 'tipo_vehiculo', 'id_tipo_vehiculo');
     }
 }

@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TipoVehiculoService;
+use Exception;
 use Illuminate\Http\Request;
 
 class TipoVehiculoController extends Controller
 {
+    public function __construct(
+        protected TipoVehiculoService $tipoVehiculoService
+    ) {}
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +18,20 @@ class TipoVehiculoController extends Controller
      */
     public function index()
     {
-        //
+        try {   
+            $tipoVehiculos = $this->tipoVehiculoService->getAll();
+            return response()->json([
+                'success' => true,
+                'message' => 'Lista de tipos de vehículos obtenida correctamente',
+                'data' => $tipoVehiculos
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la lista de tipos de vehículos',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

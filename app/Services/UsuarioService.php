@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\StoreUpdateUsuarioDTO;
 use App\DTOs\StoreUsuarioDTO;
 use App\Models\Usuario;
 use App\Models\Correo;
@@ -30,8 +31,8 @@ class UsuarioService
             'cliente',
             'colaborador'
         ])
-        ->orderBy('id_usuario', 'desc')
-        ->get();
+            ->orderBy('id_usuario', 'desc')
+            ->get();
     }
 
     public function getById(int $idUsuario)
@@ -44,7 +45,7 @@ class UsuarioService
             'cliente',
             'colaborador'
         ])
-        ->findOrFail($idUsuario);
+            ->findOrFail($idUsuario);
     }
 
     /**
@@ -117,6 +118,79 @@ class UsuarioService
                 default:
                     throw new Exception("El tipo de rol '{$dto->tipoRol}' no es válido en el sistema.");
             }
+
+            return $usuario;
+        });
+    }
+
+    public function actualizarUsuario(int $idUsuario, StoreUpdateUsuarioDTO $dto): Usuario
+    {
+        return DB::transaction(function () use ($idUsuario, $dto) {
+            $usuario = Usuario::findOrFail($idUsuario);
+
+            // Construir array solo con campos enviados
+            $data = [];
+
+            if ($dto->tipoDocumento !== null) {
+                $data['tipo_documento'] = $dto->tipoDocumento;
+            }
+            if ($dto->nombreUsuario !== null) {
+                $data['nombre_usuario'] = $dto->nombreUsuario;
+            }
+            if ($dto->apellidoUsuario !== null) {
+                $data['apellido_usuario'] = $dto->apellidoUsuario;
+            }
+            if ($dto->numeroCelular !== null) {
+                $data['numero_celular'] = $dto->numeroCelular;
+            }
+            if ($dto->idRol !== null) {
+                $data['id_rol'] = $dto->idRol;
+            }
+            // Solo actualizar contraseña si se envía una nueva
+            if (!empty($dto->contrasenia)) {
+                $data['contrasenia'] = password_hash($dto->contrasenia, PASSWORD_BCRYPT);
+            }
+
+            // Actualizar solo los campos que llegaron
+            if (!empty($data)) {
+                $usuario->update($data);
+            }
+
+            // Actualizar correo si se envía
+            if ($dto->correoElectronico !== null) {
+                $correo = Correo::where('id_usuario', $usuario->id_usuario)->first();
+                if ($correo) {
+                    $correo->update(['correo_electronico' => $dto->correoElectronico]);
+                } else {
+                    Correo::create([
+                        'id_usuario' => $usuario->id_usuario,
+                        'correo_electronico' => $dto->correoElectronico
+                    ]);
+                }
+            }
+
+            // Actualizar teléfono si se envía
+            if ($dto->numeroCelular !== null) {
+                $telefono = Telefono::where('id_usuario', $usuario->id_usuario)->first();
+                if ($telefono) {
+                    $telefono->update(['numero_celular' => (string)$dto->numeroCelular]);
+                } else {
+                    Telefono::create([
+                        'id_usuario' => $usuario->id_usuario,
+                        'numero_celular' => (string)$dto->numeroCelular
+                    ]);
+                }
+            }
+
+            // Cargar relaciones actualizadas
+            $usuario->load([
+                'correo',
+                'telefono',
+                'administrador',
+                'coordinador',
+                'cliente',
+                'colaborador'
+            ]);
 
             return $usuario;
         });

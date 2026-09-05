@@ -5,7 +5,7 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-muted mb-2">Total Clientes</h6>
-                    <h2 class="mb-0" id="totalClientes">1</h2>
+                    <h2 class="mb-0" id="totalClientes">0</h2>
                     <small class="text-muted">Clientes registrados</small>
                 </div>
             </div>
@@ -14,7 +14,7 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-muted mb-2">Registrados este Mes</h6>
-                    <h2 class="mb-0">0</h2>
+                    <h2 class="mb-0" id="registradosMes">0</h2>
                     <small class="text-muted">Clientes nuevos</small>
                 </div>
             </div>
@@ -25,7 +25,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-people me-2"></i>Clientes</h5>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#agregarClienteModal">
+            <button class="btn btn-primary btn-sm" onclick="abrirModalCrearCliente()">
                 <i class="bi bi-plus-circle me-1"></i>Agregar Cliente
             </button>
         </div>
@@ -54,7 +54,7 @@
                 <div id="sinClientes" class="text-center py-4 text-muted" style="display: none;">
                     <i class="bi bi-people fs-1"></i>
                     <p class="mt-2">No hay clientes registrados</p>
-                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#agregarClienteModal">
+                    <button class="btn btn-primary btn-sm" onclick="abrirModalCrearCliente()">
                         <i class="bi bi-plus-circle me-1"></i>Agregar primer cliente
                     </button>
                 </div>
@@ -63,16 +63,22 @@
     </div>
 </div>
 
-<!-- Modal Agregar Cliente (Paso 1) -->
-<div class="modal fade" id="agregarClienteModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+<!-- Modal Agregar/Editar Cliente -->
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Agregar Cliente</h5>
+                <h5 class="modal-title" id="clienteModalTitle">
+                    <i class="bi bi-person-plus me-2"></i>Agregar Cliente
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="formCliente">
+                    <!-- Campos ocultos para edición -->
+                    <input type="hidden" id="editIdUsuario">
+                    <input type="hidden" id="editNoDocumento">
+
                     <!-- Tipo de Documento -->
                     <div class="row mb-3">
                         <div class="col-md-12">
@@ -110,7 +116,7 @@
                         </div>
                     </div>
 
-                    <!-- Email (opcional) -->
+                    <!-- Email -->
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label class="form-label fw-bold">Email</label>
@@ -118,8 +124,17 @@
                         </div>
                     </div>
 
-                    <!-- Mensaje informativo -->
-                    <div class="alert alert-info">
+                    <!-- Contraseña (solo para creación o cambio) -->
+                    <div class="row mb-3" id="contraseniaContainer">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold" id="contraseniaLabel">Contraseña</label>
+                            <input type="password" class="form-control" id="contraseniaCliente" placeholder="Mínimo 6 caracteres">
+                            <small class="text-muted" id="contraseniaHelp">La contraseña es obligatoria para nuevos clientes</small>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje informativo (solo para creación) -->
+                    <div class="alert alert-info" id="mensajeInfo">
                         <i class="bi bi-info-circle me-2"></i>
                         Después de registrar el cliente, podrás agregar sus vehículos.
                     </div>
@@ -127,7 +142,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="guardarCliente()">
+                <button type="button" class="btn btn-primary" id="btnGuardarCliente" onclick="guardarCliente()">
                     <i class="bi bi-check-circle me-1"></i>Registrar Cliente
                 </button>
             </div>
@@ -164,11 +179,8 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Tipo</label>
                                 <select class="form-select" id="tipoVehiculoCliente">
-                                    <option value="Automóvil">Automóvil</option>
-                                    <option value="Camioneta">Camioneta</option>
-                                    <option value="Moto">Moto</option>
-                                    <option value="Camión">Camión</option>
-                                    <option value="Otro">Otro</option>
+                                    <option value="carro">Carro</option>
+                                    <option value="moto">Moto</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -212,14 +224,31 @@
     </div>
 </div>
 
-<!-- Script para manejar la lógica -->
 <script>
     let clientesData = [];
     let clientesFiltrados = [];
+    let modoEdicion = false;
 
-    // ========== FUNCIONES DE CLIENTES ==========
+    // ========== ABRIR MODAL PARA CREAR ==========
+    function abrirModalCrearCliente() {
+        modoEdicion = false;
+        document.getElementById('clienteModalTitle').innerHTML = '<i class="bi bi-person-plus me-2"></i>Agregar Cliente';
+        document.getElementById('btnGuardarCliente').innerHTML = '<i class="bi bi-check-circle me-1"></i>Registrar Cliente';
+        document.getElementById('contraseniaLabel').textContent = 'Contraseña';
+        document.getElementById('contraseniaHelp').textContent = 'La contraseña es obligatoria para nuevos clientes';
+        document.getElementById('contraseniaCliente').required = true;
+        document.getElementById('mensajeInfo').style.display = 'block';
 
-    // Cargar clientes desde la API
+        document.getElementById('formCliente').reset();
+        document.getElementById('editIdUsuario').value = '';
+        document.getElementById('editNoDocumento').value = '';
+        document.getElementById('numeroDocumento').disabled = false;
+
+        const modal = new bootstrap.Modal(document.getElementById('clienteModal'));
+        modal.show();
+    }
+
+    // ========== CARGAR CLIENTES ==========
     async function cargarClientes() {
         try {
             const response = await fetch('/api/clientes', {
@@ -236,7 +265,6 @@
                 throw new Error(result.message || 'Error al cargar clientes');
             }
 
-            // CORREGIDO: Usar result.data, no data directamente
             clientesData = result.data || [];
             clientesFiltrados = [...clientesData];
 
@@ -254,7 +282,7 @@
         }
     }
 
-    // Renderizar lista de clientes
+    // ========== RENDERIZAR LISTA ==========
     function renderizarClientes(clientes) {
         const listaContainer = document.getElementById('listaClientes');
         const cargando = document.getElementById('cargandoClientes');
@@ -274,14 +302,10 @@
         let html = '';
         clientes.forEach(cliente => {
             const usuario = cliente.usuario || {};
-
-            // CORREGIDO: Construir nombre completo correctamente
             const nombreCompleto = `${usuario.nombre_usuario || ''} ${usuario.apellido_usuario || ''}`.trim() || 'Sin nombre';
             const tipoDocumento = usuario.tipo_documento || 'Documento';
             const numeroDocumento = cliente.no_documento_cliente || 'N/A';
             const telefono = usuario.numero_celular || 'N/A';
-
-            // Vehículos (si existen en la respuesta)
             const vehiculo = cliente.vehiculo || [];
 
             html += `
@@ -327,7 +351,7 @@
         listaContainer.innerHTML = html;
     }
 
-    // Filtrar clientes por búsqueda
+    // ========== FILTRAR ==========
     function filtrarClientes(busqueda) {
         if (!busqueda || busqueda.trim() === '') {
             clientesFiltrados = [...clientesData];
@@ -349,18 +373,13 @@
         renderizarClientes(clientesFiltrados);
     }
 
-    // Actualizar estadísticas
+    // ========== ESTADÍSTICAS ==========
     function actualizarEstadisticas() {
         const total = clientesData.length;
         document.getElementById('totalClientes').textContent = total;
     }
 
-    // Editar cliente (placeholder)
-    function editarCliente(documento) {
-        alert(`Editar cliente con documento: ${documento}`);
-    }
-
-    // Eliminar cliente
+    // ========== ELIMINAR CLIENTE ==========
     async function eliminarCliente(documento) {
         if (!confirm(`¿Estás seguro de eliminar el cliente con documento ${documento}?`)) {
             return;
@@ -390,12 +409,43 @@
         }
     }
 
-
-    // ========== FUNCIONES DE VEHÍCULOS ==========
-
+    // ========== VEHÍCULOS ==========
     let vehiculosCliente = [];
 
-    // Guardar cliente
+    // ========== EDITAR CLIENTE ==========
+    function editarCliente(documento) {
+        const cliente = clientesData.find(c => c.no_documento_cliente == documento);
+        if (!cliente) {
+            alert('Cliente no encontrado');
+            return;
+        }
+
+        const usuario = cliente.usuario || {};
+        modoEdicion = true;
+
+        document.getElementById('clienteModalTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar Cliente';
+        document.getElementById('btnGuardarCliente').innerHTML = '<i class="bi bi-check-circle me-1"></i>Actualizar Cliente';
+        document.getElementById('contraseniaLabel').textContent = 'Nueva Contraseña (opcional)';
+        document.getElementById('contraseniaHelp').textContent = 'Dejar en blanco para mantener la actual';
+        document.getElementById('contraseniaCliente').required = false;
+        document.getElementById('mensajeInfo').style.display = 'none';
+
+        document.getElementById('editIdUsuario').value = usuario.id_usuario || '';
+        document.getElementById('editNoDocumento').value = documento;
+        document.getElementById('tipoDocumento').value = usuario.tipo_documento || 'CC';
+        document.getElementById('nombreCliente').value = usuario.nombre_usuario || '';
+        document.getElementById('apellidosCliente').value = usuario.apellido_usuario || '';
+        document.getElementById('numeroDocumento').value = documento;
+        document.getElementById('numeroDocumento').disabled = true;
+        document.getElementById('numeroCelular').value = usuario.numero_celular || '';
+        document.getElementById('emailCliente').value = usuario.correo_electronico || '';
+        document.getElementById('contraseniaCliente').value = '';
+
+        const modal = new bootstrap.Modal(document.getElementById('clienteModal'));
+        modal.show();
+    }
+
+    // ========== GUARDAR CLIENTE ==========
     async function guardarCliente() {
         const nombre = document.getElementById('nombreCliente').value.trim();
         const apellidos = document.getElementById('apellidosCliente').value.trim();
@@ -403,109 +453,116 @@
         const numDoc = document.getElementById('numeroDocumento').value.trim();
         const numCelular = document.getElementById('numeroCelular').value.trim();
         const email = document.getElementById('emailCliente').value.trim();
+        const contrasenia = document.getElementById('contraseniaCliente').value.trim();
+        const idUsuario = document.getElementById('editIdUsuario').value;
 
         if (!nombre || !apellidos || !numDoc || !numCelular) {
             alert('Por favor completa todos los campos obligatorios (*)');
             return;
         }
 
-        // Limpiar y validar teléfono
         const telefonoLimpio = numCelular.replace(/[\s\-\(\)\.]/g, '');
         if (!/^\d+$/.test(telefonoLimpio)) {
             alert('El teléfono solo debe contener números');
             return;
         }
-        if (telefonoLimpio.length > 15) {
-            alert('El número de teléfono no puede tener más de 15 dígitos');
-            return;
-        }
-        if (telefonoLimpio.length < 7) {
-            alert('El número de teléfono debe tener al menos 7 dígitos');
+        if (telefonoLimpio.length > 15 || telefonoLimpio.length < 7) {
+            alert('El teléfono debe tener entre 7 y 15 dígitos');
             return;
         }
 
-        // Limpiar y validar documento
         const documentoLimpio = numDoc.replace(/[\s\-\.]/g, '');
         if (!/^\d+$/.test(documentoLimpio)) {
             alert('El documento solo debe contener números');
             return;
         }
-        if (documentoLimpio.length > 20) {
-            alert('El documento no puede tener más de 20 dígitos');
+        if (documentoLimpio.length > 20 || documentoLimpio.length < 5) {
+            alert('El documento debe tener entre 5 y 20 dígitos');
             return;
         }
-        if (documentoLimpio.length < 5) {
-            alert('El documento debe tener al menos 5 dígitos');
-            return;
-        }
-
-        const clientePayload = {
-            tipo_documento: tipoDoc,
-            nombre_usuario: nombre,
-            apellido_usuario: apellidos,
-            numero_celular: telefonoLimpio,
-            id_rol: 1,
-            contrasenia: 'cliente123',
-            tipo_rol: 'cliente',
-            no_documento_usuario: documentoLimpio,
-            correo_electronico: email || `${documentoLimpio}@cliente.local`,
-            id_plan: null
-        };
 
         try {
-            const response = await fetch('/api/usuarios', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(clientePayload)
-            });
+            let response, result;
+            const payload = {
+                tipo_documento: tipoDoc,
+                nombre_usuario: nombre,
+                apellido_usuario: apellidos,
+                numero_celular: telefonoLimpio,
+                correo_electronico: email || null
+            };
 
-            const result = await response.json();
+            if (modoEdicion) {
+                if (contrasenia) {
+                    if (contrasenia.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres');
+                    payload.contrasenia = contrasenia;
+                }
+                response = await fetch(`/api/usuarios/${idUsuario}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } else {
+                if (!contrasenia) throw new Error('La contraseña es obligatoria para nuevos clientes');
+                if (contrasenia.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres');
+                const clientePayload = {
+                    ...payload,
+                    id_rol: 3,
+                    contrasenia: contrasenia,
+                    tipo_rol: 'cliente',
+                    no_documento_usuario: documentoLimpio,
+                    id_plan: null
+                };
+                response = await fetch('/api/usuarios', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(clientePayload)
+                });
+            }
 
+            result = await response.json();
             if (!response.ok) {
-                throw new Error(result.message || 'No se pudo crear el cliente');
+                if (result.errors) {
+                    const mensajes = Object.values(result.errors).flat().join('\n');
+                    throw new Error(mensajes);
+                }
+                throw new Error(result.message || 'Error al procesar la solicitud');
             }
 
-            localStorage.setItem('smartclean_cliente_documento', documentoLimpio);
-            document.getElementById('noDocumentoClienteVehiculo').value = documentoLimpio;
-            console.log("local documento: " + documentoLimpio);
+            alert(modoEdicion ? 'Cliente actualizado correctamente' : 'Cliente registrado correctamente');
 
+            const modal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
+            if (modal) modal.hide();
 
-            // Cerrar el modal de cliente
-            const clienteModal = bootstrap.Modal.getInstance(document.getElementById('agregarClienteModal'));
-            if (clienteModal) {
-                clienteModal.hide();
+            if (!modoEdicion) {
+                localStorage.setItem('smartclean_cliente_documento', documentoLimpio);
+                document.getElementById('noDocumentoClienteVehiculo').value = documentoLimpio;
+                vehiculosCliente = [];
+                actualizarListaVehiculosCliente();
+                const vehiculoModal = new bootstrap.Modal(document.getElementById('agregarVehiculoClienteModal'));
+                vehiculoModal.show();
+                document.getElementById('placaVehiculoCliente').value = '';
+                document.getElementById('marcaVehiculoCliente').value = '';
+                document.getElementById('modeloVehiculoCliente').value = '';
+                document.getElementById('colorVehiculoCliente').value = '';
+                document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
             }
 
-            // Mostrar el modal de vehículos
-            const vehiculoModal = new bootstrap.Modal(document.getElementById('agregarVehiculoClienteModal'));
-            vehiculoModal.show();
-
-            // Resetear lista de vehículos
-            vehiculosCliente = [];
-            actualizarListaVehiculosCliente();
-
-            // Limpiar campos del vehículo
-            document.getElementById('placaVehiculoCliente').value = '';
-            document.getElementById('marcaVehiculoCliente').value = '';
-            document.getElementById('modeloVehiculoCliente').value = '';
-            document.getElementById('colorVehiculoCliente').value = '';
-            document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
-
-            resetearFormulario();
+            cargarClientes();
 
         } catch (error) {
-            console.error('Error:', error);
             alert('Error: ' + error.message);
         }
     }
 
-    // Guardar vehículo
+    // ========== GUARDAR VEHÍCULO ==========
     async function guardarVehiculoCliente() {
         const noDocumentoCliente = localStorage.getItem('smartclean_cliente_documento');
-        console.log("local documento: " + noDocumentoCliente);
         const placa = document.getElementById('placaVehiculoCliente').value.trim().toUpperCase();
         const tipo = document.getElementById('tipoVehiculoCliente').value;
         const marca = document.getElementById('marcaVehiculoCliente').value.trim();
@@ -539,7 +596,7 @@
                 body: JSON.stringify({
                     placa_vehiculo: placa,
                     no_documento_cliente: noDocumentoCliente,
-                    tipo_vehiculo: tipo,
+                    id_tipo_vehiculo: tipo === 'carro' ? 1 : 2,
                     color_vehiculo: color,
                     marca_vehiculo: marca,
                     modelo_vehiculo: modelo
@@ -561,14 +618,12 @@
             });
             actualizarListaVehiculosCliente();
 
-            // Limpiar campos
             document.getElementById('placaVehiculoCliente').value = '';
             document.getElementById('marcaVehiculoCliente').value = '';
             document.getElementById('modeloVehiculoCliente').value = '';
             document.getElementById('colorVehiculoCliente').value = '';
             document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
 
-            // Mostrar mensaje de éxito
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-success alert-dismissible fade show mt-2';
             alertDiv.innerHTML = `
@@ -585,7 +640,7 @@
         }
     }
 
-    // Actualizar lista de vehículos
+    // ========== ACTUALIZAR LISTA DE VEHÍCULOS ==========
     function actualizarListaVehiculosCliente() {
         const container = document.getElementById('listaVehiculosCliente');
 
@@ -621,7 +676,6 @@
         container.innerHTML = html;
     }
 
-    // Eliminar vehículo de la lista local
     function eliminarVehiculoCliente(index) {
         if (confirm('¿Eliminar este vehículo de la lista?')) {
             vehiculosCliente.splice(index, 1);
@@ -629,7 +683,6 @@
         }
     }
 
-    // Finalizar registro
     function finalizarRegistro() {
         const totalVehiculos = vehiculosCliente.length;
         const mensaje = totalVehiculos > 0 ?
@@ -639,27 +692,24 @@
         alert(mensaje);
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('agregarVehiculoClienteModal'));
-        if (modal) {
-            modal.hide();
-        }
-
-        // Recargar la lista de clientes
+        if (modal) modal.hide();
         cargarClientes();
     }
 
-    // Resetear formulario
     function resetearFormulario() {
         document.getElementById('formCliente').reset();
         document.getElementById('noDocumentoClienteVehiculo').value = '';
         vehiculosCliente = [];
+        document.getElementById('numeroDocumento').disabled = false;
+        modoEdicion = false;
     }
 
-    // Resetear cuando se cierra el modal principal
-    document.getElementById('agregarClienteModal').addEventListener('hidden.bs.modal', function() {
+    // Evento al cerrar el modal
+    document.getElementById('clienteModal').addEventListener('hidden.bs.modal', function() {
         resetearFormulario();
     });
 
-    // Permitir guardar vehículo con Enter
+    // Enter para guardar vehículo
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             const modalVehiculo = document.getElementById('agregarVehiculoClienteModal');
@@ -673,8 +723,7 @@
         }
     });
 
-    // ========== INICIALIZAR ==========
-    // Cargar clientes al iniciar la página
+    // Inicializar
     document.addEventListener('DOMContentLoaded', function() {
         cargarClientes();
     });
