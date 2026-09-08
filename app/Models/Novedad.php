@@ -22,7 +22,8 @@ class Novedad extends Model
         'no_documento_colaborador',
         'no_documento_cliente',
         'etapo_novedad',
-        'id_reserva'
+        'id_reserva',
+        'estado_novedad'
     ];
 
     public function cliente()

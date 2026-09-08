@@ -35,21 +35,32 @@ class NovedadService
      * @return Novedad
      * @throws Exception
      */
-
     public function registrarNovedad(StoreNovedadDTO $dto): Novedad
     {
-        return DB::transaction(function () use ($dto){
+        return DB::transaction(function () use ($dto) {
             $novedad = Novedad::create([
                 'tipo_novedad' => $dto->tipoNovedad,
                 'descripcion_novedad' => $dto->descripcionNovedad,
-                'ticket_novedad' => $dto->ticketNovedad,
+                'ticket_novedad' => $this->generarTicket(),
                 'no_documento_colaborador' => $dto->noDocumentoColaborador,
                 'no_documento_cliente' => $dto->noDocumentoCliente,
-                'etapo_novedad' => $dto->etapoNovedad,
-                'id_reserva' => $dto->idReserva
+                'etapo_novedad' => $dto->etapoNovedad ?? 'Pendiente',
+                'id_reserva' => $dto->idReserva,
+                'estado_novedad' => true
             ]);
-            
+
             return $novedad;
         });
+    }
+
+    private function generarTicket(): string
+    {
+        $ultimo = Novedad::where('ticket_novedad', 'like', 'C%')
+            ->orderByRaw('CAST(SUBSTRING(ticket_novedad, 2) AS UNSIGNED) DESC')
+            ->first();
+
+        $siguienteNumero = $ultimo ? ((int) substr($ultimo->ticket_novedad, 1)) + 1 : 1;
+
+        return 'C' . str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT);
     }
 }

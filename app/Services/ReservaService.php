@@ -13,10 +13,10 @@ class ReservaService
         return Reserva::with([
             'cliente',
             'vehiculo',
-            'colaborador',
+            'colaborador.usuario',
             'plan',
             'servicio',
-            'tipo_vehiculo'
+            'tipoVehiculo'
         ])
             ->orderBy('id_reserva', 'desc')
             ->get();
@@ -27,10 +27,10 @@ class ReservaService
         return Reserva::with([
             'cliente',
             'vehiculo',
-            'colaborador',
+            'colaborador.usuario',
             'plan',
             'servicio',
-            'tipo_vehiculo'
+            'tipoVehiculo'
         ])->findOrFail($idReserva);
     }
 
