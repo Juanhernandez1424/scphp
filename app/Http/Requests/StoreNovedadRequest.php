@@ -6,31 +6,20 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreNovedadRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
     public function rules()
     {
         return [
             'tipo_novedad' => 'required|string',
             'descripcion_novedad' => 'required|string',
-            'ticket_novedad' => 'required|string',
-            'no_documento_colaborador' => 'required|int',
-            'no_documento_cliente' => 'required|int',
-            'etapo_novedad' => 'string',
-            'id_reserva' => 'required|int'
+            'no_documento_colaborador' => 'required|integer|exists:colaborador,no_documento_colaborador',
+            'no_documento_cliente' => 'required|integer|exists:cliente,no_documento_cliente',
+            'etapo_novedad' => 'nullable|string',
+            'id_reserva' => 'required|integer|exists:reserva,id_reserva'
         ];
     }
 }

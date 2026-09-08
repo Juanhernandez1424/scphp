@@ -25,7 +25,6 @@ class Usuario extends Model
         'contrasenia',
         'estado_usuario'
     ];
-
     public function correo()
     {
         return $this->hasOne(Correo::class, 'id_usuario', 'id_usuario');

@@ -133,7 +133,6 @@
                             <th scope="col">#</th>
                             <th scope="col">Ticket</th>
                             <th scope="col">Numero de Documento</th>
-                            <th scope="col">Documento</th>
                             <th scope="col">Placa</th>
                             <th scope="col">Fecha Reporte</th>
                             <th scope="col">Etapa Novedad</th>
@@ -181,131 +180,197 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form>
-                                    <div class="mb-3">
-                                        <h2>Tipo de Novedad</h2>
-                                        <select class="form-select">
-                                            <option value="1">Espacio de Trabajo</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <h2>Cliente</h2>
-                                        <select class="form-select" name="no_documento_cliente" id="selectClientes">
-                                            <option value="">Cargando clientes de la base de datos...</option>
-                                        </select>
-                                    </div>
+    <form>
+        <div class="mb-3">
+            <h2>Tipo de Novedad</h2>
+            <select class="form-select" id="selectTipoNovedad">
+                <option value="inconformidad">Inconformidad con el servicio</option>
+                <option value="retraso">Retraso en la entrega</option>
+                <option value="danos_vehiculo">Daños en el vehículo</option>
+            </select>
+        </div>
 
-                                    <div class="mb-3">
-                                        <h2>Ticket de Novedad</h2>
-                                        <input class="form-control" rows="3"></input>
-                                    </div>
+        <div class="mb-3">
+            <h2>Reserva</h2>
+            <select class="form-select" id="selectReserva">
+                <option value="">Cargando reservas...</option>
+            </select>
+        </div>
 
-                                    <div class="mb-3">
-                                        <h2>Colaborador</h2>
-                                        <select class="form-select" name="no_documento_colaborador" id="selectColaboradores">
-                                            <option value="">Cargando colaboradores...</option>
-                                        </select>
-                                    </div>
+        <div class="mb-3">
+            <h2>Cliente</h2>
+            <input type="text" class="form-control" id="inputCliente" disabled>
+        </div>
 
-                                    <div class="mb-3">
-                                        <h2>Descripcion</h2>
-                                        <textarea class="form-control" rows="3"></textarea>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-primary btn-sm" style="background-color: #2B78E4; border: none;">Guardar</button>
-                            </div>
-                        </div>
+        <div class="mb-3">
+            <h2>Colaborador</h2>
+            <input type="text" class="form-control" id="inputColaborador" disabled>
+        </div>
+
+        <div class="mb-3">
+            <h2>Ticket de Novedad</h2>
+            <input type="text" class="form-control" id="inputTicket" disabled placeholder="Se genera automáticamente al guardar">
+        </div>
+
+        <div class="mb-3">
+            <h2>Descripcion</h2>
+            <textarea class="form-control" id="inputDescripcion" rows="3"></textarea>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+    <button type="button" id="btnGuardarNovedad" class="btn btn-primary btn-sm" style="background-color: #2B78E4; border: none;">Guardar</button>
+</div>
                     </div>
                 </div>
 
             </main>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // este solo consulta datos, va por un solo archivo sin mandar todo el html por eso en formato json  y toca esperar antes de seguir al otro punto
-        async function cargarClientes() {
-            try {
-                const response = await fetch('/api/reservas', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let reservasCache = [];
 
-                const resultado = await response.json();
-
-                if (resultado.success) { //Aca revisa si respondio con exito
-                    const clientes = resultado.data;
-                    const selectHTML = document.getElementById('selectClientes'); // aca borra los clientes repetidos del html y los deja en blanco
-
-                    selectHTML.innerHTML = '<option value="">-- Seleccione el Cliente --</option>';
-
-                    clientes.forEach(cliente => { //aca es un ciclo donde revisa 1 por 1
-                        const opcion = document.createElement('option');
-                        // Asigna la cédula real de tu base de datos al value
-                        opcion.textContent = `Cédula: ${cliente.cliente.no_documento_cliente}`;
-                        selectHTML.appendChild(opcion);
-                    });
-                }
-            } catch (error) {
-                console.error("Error conectando con ClienteController:", error); //mensaje de error
-            }
-        }
-        document.addEventListener('DOMContentLoaded', cargarClientes); //funciona
-    </script>
-    <script>
-        async function cargarColaboradores() {
-            try {
-                const response = await fetch('/api/reservas', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const resultado = await response.json();
-
-                console.log(resultado);
-
-                if (resultado.success) {
-                    const colaboradores = resultado.data;
-                    const selectHTML = document.getElementById('selectColaboradores');
-
-                    selectHTML.innerHTML = '<option value="">-- Seleccione el Colaborador --</option>';
-
-                    colaboradores.forEach(colaborador => {
-                        const opcion = document.createElement('option');
-
-                        // 1. Primero calculamos la cédula con la red de seguridad de forma limpia
-                        // const cedula = colaborador.no_documento_colaborador ||
-                        //     (colaborador.usuario ? colaborador.usuario.no_documento_usuario : '') ||
-                        //     colaborador.id_usuario;
-
-                        // 2. Ahora que ya tenemos la cédula calculada, se la asignamos a la opción
-                        opcion.textContent = `Cédula Colaborador: ${colaborador.colaborador.no_documento_colaborador}`;
-
-                        // 3. Finalmente insertamos la opción en el menú desplegable
-                        selectHTML.appendChild(opcion);
-                    });
-
-                }
-            } catch (error) {
-                console.error("Error conectando con ColaboradorController:", error);
-            }
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarClientes();
-            cargarColaboradores();
+async function cargarReservas() {
+    try {
+        const response = await fetch('/api/reservas', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
         });
-    </script>
-</body>
+        const resultado = await response.json();
+        const reservas = resultado.success ? resultado.data : resultado;
+        reservasCache = reservas;
 
+        const selectHTML = document.getElementById('selectReserva');
+        selectHTML.innerHTML = '<option value="">-- Seleccione la Reserva --</option>';
+
+        reservas.forEach(reserva => {
+            const nombreCliente = reserva.cliente?.usuario
+                ? `${reserva.cliente.usuario.nombre_usuario} ${reserva.cliente.usuario.apellido_usuario}`
+                : 'Cliente desconocido';
+
+            const opcion = document.createElement('option');
+            opcion.value = reserva.id_reserva;
+            opcion.textContent = `Reserva #${reserva.id_reserva} - ${nombreCliente} - Placa ${reserva.placa_vehiculo} - ${reserva.fecha}`;
+            selectHTML.appendChild(opcion);
+        });
+    } catch (error) {
+        console.error("Error cargando las reservas:", error);
+    }
+}
+
+function autocompletarReserva() {
+    const idReserva = document.getElementById('selectReserva').value;
+    const reserva = reservasCache.find(r => r.id_reserva == idReserva);
+
+    const inputCliente = document.getElementById('inputCliente');
+    const inputColaborador = document.getElementById('inputColaborador');
+
+    if (!reserva) {
+        inputCliente.value = '';
+        inputColaborador.value = '';
+        return;
+    }
+
+    inputCliente.value = reserva.cliente?.usuario
+        ? `${reserva.cliente.usuario.nombre_usuario} ${reserva.cliente.usuario.apellido_usuario} (CC ${reserva.no_documento_cliente})`
+        : `Cédula ${reserva.no_documento_cliente}`;
+
+    inputColaborador.value = reserva.colaborador?.usuario
+        ? `${reserva.colaborador.usuario.nombre_usuario} ${reserva.colaborador.usuario.apellido_usuario} (CC ${reserva.no_documento_colaborador})`
+        : `Cédula ${reserva.no_documento_colaborador}`;
+}
+
+async function guardarNovedad() {
+    const idReserva = document.getElementById('selectReserva').value;
+    const reserva = reservasCache.find(r => r.id_reserva == idReserva);
+
+    if (!reserva) {
+        alert('Por favor selecciona una reserva.');
+        return;
+    }
+
+    const payload = {
+        tipo_novedad: document.getElementById('selectTipoNovedad').value,
+        descripcion_novedad: document.getElementById('inputDescripcion').value,
+        no_documento_colaborador: reserva.no_documento_colaborador,
+        no_documento_cliente: reserva.no_documento_cliente,
+        id_reserva: reserva.id_reserva
+    };
+
+    try {
+        const response = await fetch('/api/novedades', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const resultado = await response.json();
+
+        if (!response.ok) {
+            console.error(resultado);
+            alert(resultado.message || 'Ocurrió un error al guardar la novedad.');
+            return;
+        }
+
+        const modalEl = document.getElementById('modalNovedad');
+        bootstrap.Modal.getInstance(modalEl).hide();
+
+        document.getElementById('inputDescripcion').value = '';
+        document.getElementById('inputCliente').value = '';
+        document.getElementById('inputColaborador').value = '';
+        document.getElementById('selectReserva').value = '';
+
+        cargarNovedades();
+
+    } catch (error) {
+        console.error("Error guardando la novedad:", error);
+        alert('Ocurrió un error de conexión al guardar.');
+    }
+}
+
+async function cargarNovedades() {
+    try {
+        const response = await fetch('/api/novedades', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+        });
+        const resultado = await response.json();
+        const novedades = resultado.success ? resultado.data : resultado;
+
+        const tbody = document.querySelector('table.table tbody');
+        tbody.innerHTML = '';
+
+        novedades.forEach((novedad, index) => {
+            const fecha = novedad.created_at
+                ? new Date(novedad.created_at).toLocaleDateString('es-CO')
+                : '-';
+            const placa = novedad.reserva?.placa_vehiculo ?? '-';
+
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <th scope="row">${index + 1}</th>
+                <td>${novedad.ticket_novedad}</td>
+                <td>${novedad.no_documento_cliente ?? '-'}</td>
+                <td>${placa}</td>
+                <td>${fecha}</td>
+                <td>${novedad.etapo_novedad}</td>
+                <td><button class="btn btn-sm btn-outline-primary">Ver</button></td>
+            `;
+            tbody.appendChild(fila);
+        });
+    } catch (error) {
+        console.error("Error cargando las novedades:", error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    cargarReservas();
+    cargarNovedades();
+    document.getElementById('selectReserva').addEventListener('change', autocompletarReserva);
+    document.getElementById('btnGuardarNovedad').addEventListener('click', guardarNovedad);
+});
+</script>
+</body>
 </html>
