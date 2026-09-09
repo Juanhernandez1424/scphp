@@ -901,8 +901,8 @@
 
                 serviciosData.forEach(servicio => {
                     select.innerHTML += `
-                    <option value="${servicio.id_servicio}" data-precio="${servicio.precio_servicio}">
-                        ${servicio.nombre_servicio} - $ ${Number(servicio.precio_servicio).toLocaleString()}
+                    <option value="${servicio.id_servicio}" data-precio="${servicio.costo_servicio}">
+                        ${servicio.nombre_servicio} - $ ${Number(servicio.costo_servicio).toLocaleString()}
                     </option>
                 `;
                 });
@@ -1065,7 +1065,7 @@
                         .trim() || 'Sin nombre';
                     const placa = reserva.vehiculo?.placa_vehiculo || 'N/A';
                     const servicio = reserva.servicio?.nombre_servicio || 'Sin servicio';
-                    const precio = reserva.servicio?.precio_servicio || 0;
+                    const precio = reserva.servicio?.costo_servicio || 0;
 
                     html += `
                     <div class="reserva-item">

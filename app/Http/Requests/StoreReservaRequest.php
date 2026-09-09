@@ -33,7 +33,7 @@ class StoreReservaRequest extends FormRequest
             'id_servicio' => 'required|int',
             'id_tipo_vehiculo' => 'required|integer|exists:tipo_vehiculo,id_tipo_vehiculo',
             'etapa_lavado' => 'nullable|string',
-            'fotos_vehiculo' => 'string'
+            'fotos_vehiculo' => 'nullable|string'
         ];
     }
 }
