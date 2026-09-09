@@ -8,9 +8,9 @@ class StoreNovedadDTO
         public string $tipoNovedad,
         public string $descripcionNovedad,
         public int $noDocumentoColaborador,
-        public int $noDocumentoCliente,
+        public ?int $noDocumentoCliente,
         public ?string $etapoNovedad,
-        public int $idReserva
+        public ?int $idReserva
     ) {}
 
     public static function fromRequest(array $data): self
@@ -19,9 +19,9 @@ class StoreNovedadDTO
             tipoNovedad: $data['tipo_novedad'],
             descripcionNovedad: $data['descripcion_novedad'],
             noDocumentoColaborador: (int)$data['no_documento_colaborador'],
-            noDocumentoCliente: (int)$data['no_documento_cliente'],
+            noDocumentoCliente: isset($data['no_documento_cliente']) ? (int)$data['no_documento_cliente'] : null,
             etapoNovedad: $data['etapo_novedad'] ?? null,
-            idReserva: (int)$data['id_reserva']
+            idReserva: isset($data['id_reserva']) ? (int)$data['id_reserva'] : null
         );
     }
 }
