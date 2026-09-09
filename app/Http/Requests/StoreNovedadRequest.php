@@ -17,9 +17,9 @@ class StoreNovedadRequest extends FormRequest
             'tipo_novedad' => 'required|string',
             'descripcion_novedad' => 'required|string',
             'no_documento_colaborador' => 'required|integer|exists:colaborador,no_documento_colaborador',
-            'no_documento_cliente' => 'required|integer|exists:cliente,no_documento_cliente',
+            'no_documento_cliente' => 'nullable|integer|exists:cliente,no_documento_cliente',
             'etapo_novedad' => 'nullable|string',
-            'id_reserva' => 'required|integer|exists:reserva,id_reserva'
+            'id_reserva' => 'nullable|integer|exists:reserva,id_reserva'
         ];
     }
 }
