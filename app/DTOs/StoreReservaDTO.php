@@ -31,7 +31,7 @@ class StoreReservaDTO
             idServicio: (int)$data['id_servicio'],
             idTipoVehiculo: (int)$data['id_tipo_vehiculo'],
             etapaLavado: $data['etapa_lavado'] ?? 'Pendiente',
-            fotosVehiculo: $data['fotos_vehiculo']
+            fotosVehiculo: $data['fotos_vehiculo'] ?? ''
         );
     }
 }

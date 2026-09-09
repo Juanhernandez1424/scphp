@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('usuarios', UsuarioController::class);
 
+Route::get('/clientes/byTipoNumDoc', [ClienteController::class, 'getByTipoNumeroDocumento']);
 Route::apiResource('clientes', ClienteController::class);
 
 Route::apiResource('administradores', AdministradorController::class);
@@ -46,4 +47,5 @@ Route::apiResource('novedades', NovedadController::class);
 
 Route::apiResource('tipo-vehiculo', TipoVehiculoController::class);
 
+Route::get('/servicios/tipo-vehiculo/{idTipoVehiculo}', [ServicioController::class, 'getByTipoVehiculo']);
 Route::apiResource('servicios', ServicioController::class);

@@ -24,6 +24,16 @@ class ServicioService
         ])->findOrFail($idServicio);
     }
 
+    public function getByTipoVehiculo(int $idTipoVehiculo)
+    {
+        return Servicio::with([
+            'tipoVehiculo'
+        ])
+            ->where('id_tipo_vehiculo', $idTipoVehiculo)
+            ->orderBy('nombre_servicio', 'asc')
+            ->get();
+    }
+
 
     public function registrarServicio(StoreServicioDTO $dto): Servicio
     {
