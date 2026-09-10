@@ -239,7 +239,10 @@ async function cargarReservas() {
             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
         });
         const resultado = await response.json();
-        const reservas = resultado.success ? resultado.data : resultado;
+        const todasLasReservas = resultado.success ? resultado.data : resultado;
+
+        const reservas = todasLasReservas.filter(r => r.etapa_lavado === 'Finalizado');
+
         reservasCache = reservas;
 
         const selectHTML = document.getElementById('selectReserva');
@@ -255,11 +258,14 @@ async function cargarReservas() {
             opcion.textContent = `Reserva #${reserva.id_reserva} - ${nombreCliente} - Placa ${reserva.placa_vehiculo} - ${reserva.fecha}`;
             selectHTML.appendChild(opcion);
         });
+
+        if (reservas.length === 0) {
+            selectHTML.innerHTML = '<option value="">No hay reservas finalizadas disponibles</option>';
+        }
     } catch (error) {
         console.error("Error cargando las reservas:", error);
     }
 }
-
 function autocompletarReserva() {
     const idReserva = document.getElementById('selectReserva').value;
     const reserva = reservasCache.find(r => r.id_reserva == idReserva);
@@ -339,10 +345,13 @@ async function cargarNovedades() {
         const resultado = await response.json();
         const novedades = resultado.success ? resultado.data : resultado;
 
+        // Solo mostramos las novedades de CLIENTE (ticket empieza con 'C')
+        const deCliente = novedades.filter(n => n.ticket_novedad && n.ticket_novedad.startsWith('C'));
+
         const tbody = document.querySelector('table.table tbody');
         tbody.innerHTML = '';
 
-        novedades.forEach((novedad, index) => {
+        deCliente.forEach((novedad, index) => {
             const fecha = novedad.created_at
                 ? new Date(novedad.created_at).toLocaleDateString('es-CO')
                 : '-';
