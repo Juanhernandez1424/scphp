@@ -23,12 +23,18 @@ class StoreReservaRequest extends FormRequest
      */
     public function rules()
     {
+        $horasDisponibles = [];
+
+        for ($minutos = 7 * 60; $minutos < 18 * 60; $minutos += 30) {
+            $horasDisponibles[] = sprintf('%02d:%02d', intdiv($minutos, 60), $minutos % 60);
+        }
+
         return [
             'no_documento_cliente' => 'required|int',
             'placa_vehiculo' => 'required|string',
             'no_documento_colaborador' => 'required|int',
             'fecha' => 'required|date',
-            'hora' => 'required|date_format:H:i',
+            'hora' => ['required', 'date_format:H:i', 'in:' . implode(',', $horasDisponibles)],
             'id_plan' => 'nullable|int',
             'id_servicio' => 'required|int',
             'id_tipo_vehiculo' => 'required|integer|exists:tipo_vehiculo,id_tipo_vehiculo',

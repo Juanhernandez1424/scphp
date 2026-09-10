@@ -623,8 +623,17 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="label-form">Hora</label>
-                                            <input type="time" id="horaReserva" class="form-control form-select-custom"
+                                            <select id="horaReserva" class="form-control form-select-custom"
                                                 style="padding: 0.5rem 1rem;">
+                                                <option value="">Selecciona una ventana...</option>
+                                                @for ($minutos = 7 * 60; $minutos < 18 * 60; $minutos +=30)
+                                                    @php
+                                                    $horaInicio=sprintf('%02d:%02d', intdiv($minutos, 60), $minutos % 60);
+                                                    $horaFin=sprintf('%02d:%02d', intdiv($minutos + 30, 60), ($minutos + 30) % 60);
+                                                    @endphp
+                                                    <option value="{{ $horaInicio }}">{{ $horaInicio }} - {{ $horaFin }}</option>
+                                                    @endfor
+                                            </select>
                                         </div>
                                     </div>
 

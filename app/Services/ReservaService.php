@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\StoreReservaDTO;
+use App\Http\Requests\StoreReservaRequest;
 use App\Models\Reserva;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +46,7 @@ class ReservaService
             'tipoVehiculo'
         ])
             ->where('fecha', $fecha)
-            ->orderBy('hora', 'asc')
+            ->orderBy('hora', 'desc')
             ->get();
     }
 
@@ -60,7 +61,7 @@ class ReservaService
             'tipoVehiculo'
         ])
             ->where('etapa_lavado', $dto->etapaLavado)
-            ->orderBy('hora', 'asc')
+            ->orderBy('hora', 'desc')
             ->get();
     }
 
