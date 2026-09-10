@@ -11,6 +11,7 @@ use App\DTOs\StoreVehiculoDTO;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClienteController extends Controller
 {
@@ -118,6 +119,44 @@ class ClienteController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Hubo un error consultando el cliente',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getByTipoNumeroDocumento(StoreClienteRequest $request): JsonResponse
+    {
+        try {
+            $tipoDoc = $request->query('tipoDoc');
+            $numDoc = $request->query('numDoc');
+
+            if (!$tipoDoc || !$numDoc) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cliente no encontrado',
+                    'data' => null
+                ], 400);
+            }
+
+            $cliente = $this->clienteService->getByTipoNumeroDocumento($tipoDoc, $numDoc);
+
+            if (!$cliente) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró un cliente con los datos ingresados',
+                    'data' => null
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cliente encontrado exitosamente',
+                'data' => $cliente
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al buscar el cliente',
                 'error' => $e->getMessage()
             ], 500);
         }

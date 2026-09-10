@@ -23,13 +23,13 @@
 
     <!-- Lista de empleados -->
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Empleados</h5>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#agregarEmpleadoModal">
-                <i class="bi bi-plus-circle me-1"></i>Agregar Empleado
-            </button>
-        </div>
         <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Empleados</h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#agregarEmpleadoModal">
+                    <i class="bi bi-plus-circle me-1"></i>Agregar Empleado
+                </button>
+            </div>
             <p class="text-muted mb-3">Lista de empleados registrados en el sistema</p>
 
             <!-- Buscador -->

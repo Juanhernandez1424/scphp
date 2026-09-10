@@ -235,6 +235,8 @@
                 no_documento_colaborador: parseInt(noDocumentoColaborador),
                 etapo_novedad: "Pendiente",
                 estado_novedad: 1
+                no_documento_colaborador: parseInt(noDocumentoColaborador)
+                // no se envía no_documento_cliente ni id_reserva: quedan null (novedad interna)
             };
 
             try {
@@ -275,6 +277,7 @@
                 const resultado = await response.json();
                 const novedades = resultado.success ? resultado.data : resultado;
 
+                // Solo mostramos las novedades INTERNAS (ticket empieza con 'I')
                 const internas = novedades.filter(n => n.ticket_novedad && n.ticket_novedad.startsWith('I'));
 
                 const tbody = document.querySelector('table.table tbody');
@@ -306,7 +309,6 @@
             cargarNovedadesInternas();
             document.getElementById('btnGuardarNovedadInterna').addEventListener('click', guardarNovedadInterna);
         });
-
     </script>
 </body>
 

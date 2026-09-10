@@ -32,6 +32,7 @@ class StoreNovedadRequest extends FormRequest
                     }
                 },
             ],
+            'id_reserva' => 'nullable|integer|exists:reserva,id_reserva'
         ];
     }
 }

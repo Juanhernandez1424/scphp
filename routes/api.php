@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('usuarios', UsuarioController::class);
 
+Route::get('/clientes/byTipoNumDoc', [ClienteController::class, 'getByTipoNumeroDocumento']);
 Route::apiResource('clientes', ClienteController::class);
 
 Route::apiResource('administradores', AdministradorController::class);
@@ -40,10 +41,16 @@ Route::apiResource('coordinadores', CoordinadorController::class);
 
 Route::apiResource('vehiculos', VehiculoController::class);
 
+Route::get('/reservas/fecha/{fecha}', [ReservaController::class, 'getByDate']);
+Route::put('/reservas/{id}/activar', [ReservaController::class, 'activarReserva']);
+Route::put('/reservas/{id}/iniciar', [ReservaController::class, 'iniciarReserva']);
+Route::put('/reservas/{id}/finalizar', [ReservaController::class, 'finalizarReserva']);
+Route::put('/reservas/{id}/cancelar', [ReservaController::class, 'cancelarReserva']);
 Route::apiResource('reservas', ReservaController::class);
 
 Route::apiResource('novedades', NovedadController::class);
 
 Route::apiResource('tipo-vehiculo', TipoVehiculoController::class);
 
+Route::get('/servicios/tipo-vehiculo/{idTipoVehiculo}', [ServicioController::class, 'getByTipoVehiculo']);
 Route::apiResource('servicios', ServicioController::class);

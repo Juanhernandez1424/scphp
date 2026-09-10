@@ -6,7 +6,7 @@ class StoreUsuarioDTO
 {
     public function __construct(
         public string $tipoDocumento,
-        public int $noDocumentoUsuario,
+        public string $noDocumentoUsuario,
         public string $nombreUsuario,
         public string $apellidoUsuario,
         public string $numeroCelular,
@@ -23,7 +23,7 @@ class StoreUsuarioDTO
         return new self(
             //idUsuario: (int)$data['id_usuario'],
             tipoDocumento: $data['tipo_documento'],
-            noDocumentoUsuario: (int)$data['no_documento_usuario'],
+            noDocumentoUsuario: $data['no_documento_usuario'],
             nombreUsuario: $data['nombre_usuario'],
             apellidoUsuario: $data['apellido_usuario'],
             numeroCelular: $data['numero_celular'],
