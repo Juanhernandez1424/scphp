@@ -19,6 +19,19 @@ class StoreNovedadRequest extends FormRequest
             'no_documento_colaborador' => 'required|integer|exists:colaborador,no_documento_colaborador',
             'no_documento_cliente' => 'nullable|integer|exists:cliente,no_documento_cliente',
             'etapo_novedad' => 'nullable|string',
+            'id_reserva' => [
+                'nullable',
+                'integer',
+                'exists:reserva,id_reserva',
+                function ($attribute, $value, $fail) {
+                                        if ($value !== null) {
+                        $reserva = \App\Models\Reserva::find($value);
+                        if ($reserva && $reserva->etapa_lavado !== 'Finalizado') {
+                            $fail('No se puede reportar una novedad de cliente sobre una reserva que no ha finalizado.');
+                        }
+                    }
+                },
+            ],
             'id_reserva' => 'nullable|integer|exists:reserva,id_reserva'
         ];
     }

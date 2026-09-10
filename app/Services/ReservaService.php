@@ -92,6 +92,13 @@ class ReservaService
             return $reserva;
         });
     }
+    public function actualizarEtapaLavado(int $idReserva, string $etapa): Reserva
+{
+    $reserva = Reserva::findOrFail($idReserva);
+    $reserva->update(['etapa_lavado' => $etapa]);
+
+    return $reserva->fresh();
+}
 
     public function activarReserva(int $idReserva): Reserva
     {

@@ -232,6 +232,9 @@
             const payload = {
                 tipo_novedad: document.getElementById('selectTipoNovedadInterna').value,
                 descripcion_novedad: document.getElementById('inputDescripcionInterna').value,
+                no_documento_colaborador: parseInt(noDocumentoColaborador),
+                etapo_novedad: "Pendiente",
+                estado_novedad: 1
                 no_documento_colaborador: parseInt(noDocumentoColaborador)
                 // no se envía no_documento_cliente ni id_reserva: quedan null (novedad interna)
             };

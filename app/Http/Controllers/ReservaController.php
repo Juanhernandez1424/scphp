@@ -233,19 +233,32 @@ class ReservaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+     public function update(Request $request, $id): JsonResponse
     {
-        //
-    }
+        try {
+            $request->validate([
+                'etapa_lavado' => 'required|string|in:Pendiente,En Proceso,Finalizado'
+            ]);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            $reserva = $this->reservaService->actualizarEtapaLavado((int)$id, $request->etapa_lavado);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Etapa de la reserva actualizada correctamente',
+                'data' => $reserva
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La reserva con el ID especificado no fue encontrada',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar la reserva',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
+     }

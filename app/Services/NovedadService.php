@@ -30,7 +30,6 @@ class NovedadService
 
     /**
      * Registra una novedad.
-
      * @param StoreNovedadDTO $dto
      * @return Novedad
      * @throws Exception
