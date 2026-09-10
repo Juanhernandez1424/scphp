@@ -23,13 +23,13 @@
 
     <!-- Tipos de Vehículos y Servicios -->
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-tools me-2"></i>Tipos de Vehículos y Servicios</h5>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#agregarTipoVehiculoModal">
-                <i class="bi bi-plus-circle me-1"></i>Agregar Tipo de Vehículo
-            </button>
-        </div>
         <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-tools me-2"></i>Tipos de Vehículos y Servicios</h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#agregarTipoVehiculoModal">
+                    <i class="bi bi-plus-circle me-1"></i>Agregar Tipo de Vehículo
+                </button>
+            </div>
             <p class="text-muted mb-3">Cada tipo de vehículo puede tener varios servicios con diferentes precios</p>
 
             <!-- Contenedor de la lista -->

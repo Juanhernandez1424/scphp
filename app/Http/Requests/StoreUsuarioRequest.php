@@ -33,7 +33,7 @@ class StoreUsuarioRequest extends FormRequest
             'id_rol'                 => 'required|integer|exists:rol,id_rol',
             'contrasenia'            => 'required|string|min:6|max:20',
             'tipo_rol'               => ['required', 'string', Rule::in(['cliente', 'colaborador', 'coordinador', 'administrador'])],
-            'no_documento_usuario'   => 'required|integer',
+            'no_documento_usuario'   => 'required|string',
             'correo_electronico'     => 'required|email|max:50|unique:correo,correo_electronico',
             'id_plan'                => 'nullable|integer|exists:plan,id_plan',
         ];

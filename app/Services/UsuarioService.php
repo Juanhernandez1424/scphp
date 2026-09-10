@@ -68,7 +68,7 @@ class UsuarioService
                 'apellido_usuario' => $dto->apellidoUsuario,
                 'numero_celular'   => $dto->numeroCelular,
                 'id_rol'           => $dto->idRol,
-                'contrasenia'      => password_hash($dto->contrasenia, PASSWORD_BCRYPT), // Encriptación segura
+                'contrasenia'      => password_hash($dto->contrasenia, PASSWORD_BCRYPT),
                 'estado_usuario'   => true
             ]);
 

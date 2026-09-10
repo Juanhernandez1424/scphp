@@ -34,6 +34,36 @@ class ReservaService
         ])->findOrFail($idReserva);
     }
 
+    public function getByDate(string $fecha)
+    {
+        return Reserva::with([
+            'cliente',
+            'vehiculo',
+            'colaborador.usuario',
+            'plan',
+            'servicio',
+            'tipoVehiculo'
+        ])
+            ->where('fecha', $fecha)
+            ->orderBy('hora', 'asc')
+            ->get();
+    }
+
+    public function getByEtapaLavado(StoreReservaRequest $dto): Reserva
+    {
+        return Reserva::with([
+            'cliente',
+            'vehiculo',
+            'colaborador.usuario',
+            'plan',
+            'servicio',
+            'tipoVehiculo'
+        ])
+            ->where('etapa_lavado', $dto->etapaLavado)
+            ->orderBy('hora', 'asc')
+            ->get();
+    }
+
     /**
      * Registra una reserva.
      * 
@@ -59,6 +89,95 @@ class ReservaService
             ]);
 
             return $reserva;
+        });
+    }
+
+    public function activarReserva(int $idReserva): Reserva
+    {
+        return DB::transaction(function () use ($idReserva) {
+            $reserva = Reserva::findOrFail($idReserva);
+
+            if ($reserva->etapa_lavado !== 'Pendiente') {
+                throw new \Exception("No se puede activar. La reserva está en etapa: {$reserva->etapa_lavado}");
+            }
+
+            $reserva->update(['etapa_lavado' => 'Activa']);
+
+            return $reserva->load([
+                'cliente.usuario',
+                'vehiculo',
+                'colaborador.usuario',
+                'servicio'
+            ]);
+        });
+    }
+
+    public function iniciarReserva(int $idReserva): Reserva
+    {
+        return DB::transaction(function () use ($idReserva) {
+            $reserva = Reserva::findOrFail($idReserva);
+
+            if ($reserva->etapa_lavado !== 'Activa') {
+                throw new \Exception("No se puede iniciar. La reserva está en etapa: {$reserva->etapa_lavado}");
+            }
+
+            $reserva->update(['etapa_lavado' => 'En Proceso']);
+
+            return $reserva->load([
+                'cliente.usuario',
+                'vehiculo',
+                'colaborador.usuario',
+                'servicio'
+            ]);
+        });
+    }
+
+    public function finalizarReserva(int $idReserva): Reserva
+    {
+        return DB::transaction(function () use ($idReserva) {
+            $reserva = Reserva::findOrFail($idReserva);
+
+            if ($reserva->etapa_lavado !== 'En Proceso') {
+                throw new \Exception("No se puede finalizar. La reserva está en etapa: {$reserva->etapa_lavado}");
+            }
+
+            $reserva->update(['etapa_lavado' => 'Finalizada']);
+
+            return $reserva->load([
+                'cliente.usuario',
+                'vehiculo',
+                'colaborador.usuario',
+                'servicio'
+            ]);
+        });
+    }
+
+    public function cancelarReserva(int $idReserva): Reserva
+    {
+        return DB::transaction(function () use ($idReserva) {
+            $reserva = Reserva::findOrFail($idReserva);
+
+            if ($reserva->etapa_lavado === 'Cancelada') {
+                return $reserva->load([
+                    'cliente.usuario',
+                    'vehiculo',
+                    'colaborador.usuario',
+                    'servicio'
+                ]);
+            }
+
+            if (in_array($reserva->etapa_lavado, ['En Proceso', 'Finalizada'])) {
+                throw new \Exception("No se puede cancelar. La reserva ya está finalizada.");
+            }
+
+            $reserva->update(['etapa_lavado' => 'Cancelada']);
+
+            return $reserva->load([
+                'cliente.usuario',
+                'vehiculo',
+                'colaborador.usuario',
+                'servicio'
+            ]);
         });
     }
 }

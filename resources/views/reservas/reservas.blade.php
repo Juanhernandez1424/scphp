@@ -75,7 +75,7 @@
         }
 
         .btn-search {
-            background: #212529;
+            background: #2B78E4;
             color: white;
             border: none;
             border-radius: 8px;
@@ -86,7 +86,7 @@
         }
 
         .btn-search:hover {
-            background: #000;
+            background: #2167c5;
             color: white;
         }
 
@@ -104,8 +104,8 @@
         }
 
         .client-found {
-            background-color: #f3fbf9;
-            border: 1px solid #9ee5d3;
+            background-color: #9FC5F8;
+            border: 1px solid #7eaddf;
             border-radius: 12px;
             padding: 1rem;
             margin-top: 0.75rem;
@@ -174,7 +174,7 @@
         }
 
         .btn-activar {
-            background: #28a745;
+            background: #2B78E4;
             color: white;
             border: none;
             border-radius: 8px;
@@ -184,15 +184,49 @@
         }
 
         .btn-activar:hover {
-            background: #218838;
+            background: #2167c5;
             color: white;
+        }
+
+        .btn-iniciar-lavado,
+        .btn-finalizar {
+            background: #2B78E4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-iniciar-lavado:hover,
+        .btn-finalizar:hover {
+            background: #2167c5;
+            color: white;
+        }
+
+        .btn-cancelar-reserva {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-cancelar-reserva:hover {
+            background: #e9ecef;
+            color: #212529;
         }
 
         .lavado-completado {
             background: #f8f9fa;
             border-radius: 8px;
             padding: 0.75rem 1rem;
-            border-left: 3px solid #28a745;
+            border-left: 3px solid #8474B0;
             margin-bottom: 0.5rem;
         }
 
@@ -212,8 +246,8 @@
         }
 
         .badge-completado {
-            background: #d4edda;
-            color: #155724;
+            background: #8474B0;
+            color: white;
             font-size: 0.7rem;
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
@@ -248,7 +282,7 @@
         }
 
         .btn-iniciar {
-            background: #212529;
+            background: #2B78E4;
             color: white;
             border: none;
             border-radius: 8px;
@@ -260,12 +294,12 @@
         }
 
         .btn-iniciar:hover {
-            background: #000;
+            background: #2167c5;
             color: white;
         }
 
         .text-success-badge {
-            color: #28a745;
+            color: #2B78E4;
             font-weight: 500;
             font-size: 0.75rem;
         }
@@ -298,6 +332,49 @@
             margin-right: 0.5rem;
         }
 
+        .badge-estado {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .badge-finalizada {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-cancelada {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-secundario {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .reserva-estado {
+            display: inline-flex;
+            align-items: center;
+            background: #8474B0;
+            color: white;
+            border-radius: 6px;
+            padding: 0.25rem 0.65rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .reserva-acciones {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 0.4rem;
+        }
+
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
@@ -320,6 +397,88 @@
         .placa-badge {
             font-weight: 600;
             color: #1a1a1a;
+        }
+
+        .modal-total {
+            background: #f1eef8;
+            border: 1px solid #8474B0;
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .modal-total .amount {
+            color: #8474B0;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .payment-option {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .payment-option:has(input:checked) {
+            background: #9FC5F8;
+            border-color: #2B78E4;
+        }
+
+        .payment-option input:checked {
+            accent-color: #2B78E4;
+        }
+
+        .btn-cancelar-pago {
+            background: white;
+            border: 1px solid #6c757d;
+            color: #6c757d;
+        }
+
+        .btn-cancelar-pago:hover {
+            background: #f1f3f5;
+            border-color: #495057;
+            color: #495057;
+        }
+
+        .btn-confirmar-pago {
+            background: #2B78E4;
+            border: 1px solid #2B78E4;
+            color: white;
+        }
+
+        .btn-confirmar-pago:hover,
+        .btn-confirmar-pago:focus {
+            background: #2167c5;
+            border-color: #2167c5;
+            color: white;
+        }
+
+        .receipt {
+            border: 1px dashed #adb5bd;
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .receipt-row {
+            border-bottom: 1px solid #f1f3f5;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.55rem 0;
+        }
+
+        .receipt-row:last-child {
+            border-bottom: 0;
+        }
+
+        .receipt-label {
+            color: #6c757d;
+        }
+
+        .receipt-value {
+            font-weight: 600;
+            text-align: right;
         }
     </style>
 </head>
@@ -517,6 +676,80 @@
         </div>
     </div>
 
+    <!-- Modal para registrar el pago al finalizar un lavado -->
+    <div class="modal fade" id="modalPagoReserva" tabindex="-1" aria-labelledby="modalPagoReservaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPagoReservaLabel">Finalizar reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Confirma el valor recibido y selecciona el método de pago.</p>
+                    <div class="modal-total d-flex justify-content-between align-items-center mb-4">
+                        <span class="fw-semibold">Total a pagar</span>
+                        <span class="amount" id="pagoTotal">$ 0</span>
+                    </div>
+
+                    <div class="mb-2 fw-semibold">Método de pago</div>
+                    <div class="d-grid gap-2" id="metodosPago">
+                        <label class="payment-option d-flex align-items-center gap-2">
+                            <input class="form-check-input mt-0" type="radio" name="metodoPago" value="Efectivo" checked>
+                            <span><i class="bi bi-cash-coin me-2"></i>Efectivo</span>
+                        </label>
+                        <label class="payment-option d-flex align-items-center gap-2">
+                            <input class="form-check-input mt-0" type="radio" name="metodoPago" value="Nequi">
+                            <span><i class="bi bi-phone me-2"></i>Nequi</span>
+                        </label>
+                        <label class="payment-option d-flex align-items-center gap-2">
+                            <input class="form-check-input mt-0" type="radio" name="metodoPago" value="Daviplata">
+                            <span><i class="bi bi-wallet2 me-2"></i>Daviplata</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancelar-pago" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-confirmar-pago" id="btnConfirmarPago" onclick="confirmarPago()">
+                        <i class="bi bi-check-circle me-1"></i>Confirmar pago
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recibo mostrado después de finalizar correctamente la reserva -->
+    <div class="modal fade" id="modalReciboReserva" tabindex="-1" aria-labelledby="modalReciboReservaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalReciboReservaLabel">Recibo de servicio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-check-circle-fill text-success fs-1"></i>
+                        <h5 class="mt-2 mb-1">Pago recibido</h5>
+                        <p class="text-muted small mb-0" id="reciboFechaEmision"></p>
+                    </div>
+                    <div class="receipt">
+                        <div class="receipt-row"><span class="receipt-label">Reserva</span><span class="receipt-value" id="reciboId"></span></div>
+                        <div class="receipt-row"><span class="receipt-label">Cliente</span><span class="receipt-value" id="reciboCliente"></span></div>
+                        <div class="receipt-row"><span class="receipt-label">Vehículo</span><span class="receipt-value" id="reciboVehiculo"></span></div>
+                        <div class="receipt-row"><span class="receipt-label">Servicio</span><span class="receipt-value" id="reciboServicio"></span></div>
+                        <div class="receipt-row"><span class="receipt-label">Fecha y hora</span><span class="receipt-value" id="reciboFechaServicio"></span></div>
+                        <div class="receipt-row"><span class="receipt-label">Método de pago</span><span class="receipt-value" id="reciboMetodoPago"></span></div>
+                        <div class="receipt-row fs-5"><span class="fw-semibold">Total</span><span class="receipt-value text-success" id="reciboTotal"></span></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar recibo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ========== VARIABLES GLOBALES ==========
         let clienteEncontrado = null;
@@ -524,6 +757,7 @@
         let tiposVehiculoData = [];
         let serviciosData = [];
         let vehiculosCliente = [];
+        let reservaPendienteDePago = null;
 
         // ========== BUSCAR CLIENTE ==========
         async function buscarCliente() {
@@ -610,11 +844,11 @@
                             <option value="">Selecciona un vehículo...</option>
                             ${vehiculos.map(v => `
                                 <option value="${v.placa_vehiculo}" 
-                                    data-tipo="${v.tipo_vehiculo}" 
+                                    data-tipo="${v.id_tipo_vehiculo}" 
                                     data-color="${v.color_vehiculo || ''}"
                                     data-marca="${v.marca_vehiculo || ''}"
                                     data-modelo="${v.modelo_vehiculo || ''}">
-                                    ${v.placa_vehiculo} - ${v.tipo_vehiculo || 'Sin tipo'} ${v.marca_vehiculo ? '· ' + v.marca_vehiculo : ''}
+                                    ${v.placa_vehiculo} - ${v.id_tipo_vehiculo || 'Sin tipo'} ${v.marca_vehiculo ? '· ' + v.marca_vehiculo : ''}
                                 </option>
                             `).join('')}
                         </select>
@@ -763,7 +997,7 @@
 
                 alert('Reserva creada correctamente');
                 limpiarBusqueda();
-                cargarReservas();
+                cargarReservasHoy();
 
             } catch (error) {
                 console.error('Error:', error);
@@ -999,8 +1233,6 @@
                 etapa_lavado: 'Pendiente'
             };
 
-            console.log('📤 Payload enviado:', JSON.stringify(payload, null, 2));
-
             try {
                 const response = await fetch('/api/reservas', {
                     method: 'POST',
@@ -1019,7 +1251,7 @@
 
                 alert('Reserva creada correctamente');
                 limpiarBusqueda();
-                cargarReservas();
+                cargarReservasHoy();
 
             } catch (error) {
                 console.error('Error:', error);
@@ -1027,10 +1259,13 @@
             }
         }
 
-        // ========== CARGAR RESERVAS ==========
-        async function cargarReservas() {
+        // ========== CARGAR RESERVAS HOY ==========
+
+        async function cargarReservasHoy() {
             try {
-                const response = await fetch('/api/reservas', {
+                const actualDay = new Date();
+                const fecha = actualDay.toISOString().split('T')[0];
+                const response = await fetch(`/api/reservas/fecha/${fecha}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -1045,84 +1280,269 @@
                 }
 
                 const reservas = result.data || [];
+                const reservasFinalizadas = reservas.filter(reserva => reserva.etapa_lavado === 'Finalizada');
+                const reservasPendientes = reservas.filter(reserva => reserva.etapa_lavado !== 'Finalizada');
                 const container = document.getElementById('listaReservas');
+                const completadosContainer = document.getElementById('listaLavadosCompletados');
 
-                if (reservas.length === 0) {
+                if (reservasPendientes.length === 0) {
                     container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="bi bi-calendar-x"></i>
-                        <p>No hay reservas pendientes</p>
+                        <div class="empty-state">
+                            <i class="bi bi-calendar-x"></i>
+                            <p>No hay reservas pendientes</p>
+                        </div>
+                    `;
+                } else {
+                    let html = '';
+                    reservasPendientes.forEach(reserva => {
+                        const usuario = reserva.cliente?.usuario || {};
+                        const nombreCliente = `${usuario.nombre_usuario || ''} ${usuario.apellido_usuario || ''}`.trim() || 'Sin nombre';
+                        const placa = reserva.vehiculo?.placa_vehiculo || 'N/A';
+                        const servicio = reserva.servicio?.nombre_servicio || 'Sin servicio';
+                        const precio = reserva.servicio?.costo_servicio || 0;
+                        const etapa = reserva.etapa_lavado || 'Pendiente';
+
+                        // ✅ Renderizar botón según la etapa actual
+                        const botonHtml = generarBotonEtapa(reserva.id_reserva, etapa);
+
+                        html += `
+                <div class="reserva-item">
+                    <div class="reserva-estado">${etapa}</div>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="placa">${placa}</div>
+                            <div class="cliente-nombre">${nombreCliente}</div>
+                            <div class="servicio-info">${servicio} - $ ${Number(precio).toLocaleString()}</div>
+                            <div class="tiempo">${reserva.created_at ? 'Hace ' + new Date(reserva.created_at).toLocaleTimeString() : ''}</div>
+                        </div>
+                        <div class="reserva-acciones">${botonHtml}</div>
                     </div>
-                `;
-                    document.getElementById('reservasPendientes').textContent = '0';
-                    return;
+                </div>
+            `;
+                    });
+
+                    container.innerHTML = html;
                 }
 
-                let html = '';
-                reservas.forEach(reserva => {
-                    const usuario = reserva.cliente?.usuario || {};
-                    const nombreCliente = `${usuario.nombre_usuario || ''} ${usuario.apellido_usuario || ''}`
-                        .trim() || 'Sin nombre';
-                    const placa = reserva.vehiculo?.placa_vehiculo || 'N/A';
-                    const servicio = reserva.servicio?.nombre_servicio || 'Sin servicio';
-                    const precio = reserva.servicio?.costo_servicio || 0;
-
-                    html += `
-                    <div class="reserva-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <div class="placa">${placa}</div>
-                                <div class="cliente-nombre">${nombreCliente}</div>
-                                <div class="servicio-info">${servicio} - $ ${Number(precio).toLocaleString()}</div>
-                                <div class="tiempo">${reserva.created_at ? 'Hace ' + new Date(reserva.created_at).toLocaleTimeString() : ''}</div>
-                            </div>
-                            <button class="btn-activar" onclick="activarReserva(${reserva.id_reserva})">Activar</button>
+                if (reservasFinalizadas.length === 0) {
+                    completadosContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-check-circle"></i>
+                            <p>No hay lavados completados</p>
                         </div>
-                    </div>
-                `;
-                });
+                    `;
+                } else {
+                    completadosContainer.innerHTML = reservasFinalizadas.map(reserva => {
+                        const usuario = reserva.cliente?.usuario || {};
+                        const nombreCliente = `${usuario.nombre_usuario || ''} ${usuario.apellido_usuario || ''}`.trim() || 'Sin nombre';
+                        const placa = reserva.vehiculo?.placa_vehiculo || 'N/A';
+                        const servicio = reserva.servicio?.nombre_servicio || 'Sin servicio';
+                        const precio = Number(reserva.servicio?.costo_servicio || 0).toLocaleString();
 
-                container.innerHTML = html;
-                document.getElementById('reservasPendientes').textContent = reservas.length;
+                        return `
+                            <div class="lavado-completado">
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                    <div>
+                                        <div class="placa">${placa}</div>
+                                        <div class="cliente">${nombreCliente}</div>
+                                        <div class="servicio">${servicio} - $ ${precio}</div>
+                                        <div class="tiempo">${reserva.fecha || ''} ${reserva.hora || ''}</div>
+                                    </div>
+                                    <span class="badge-completado">Finalizado</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                const reservasPendientesEl = document.getElementById('reservasPendientes');
+                if (reservasPendientesEl) reservasPendientesEl.textContent = reservasPendientes.length;
 
             } catch (error) {
                 console.error('Error:', error);
             }
         }
 
-        // ========== ACTIVAR RESERVA ==========
-        async function activarReserva(idReserva) {
-            if (!confirm('¿Activar esta reserva?')) return;
+        // ✅ NUEVA FUNCIÓN: Genera el botón correcto según la etapa
+        function generarBotonEtapa(idReserva, etapa) {
+            let botonAccion = '';
+
+            switch (etapa) {
+                case 'Pendiente':
+                    botonAccion = `<button class="btn-activar" onclick="cambiarEtapaReserva(${idReserva}, 'activar')">
+                        <i class="bi bi-play-fill me-1"></i>Activar
+                    </button>`;
+                    break;
+
+                case 'Activa':
+                    botonAccion = `<button class="btn-iniciar-lavado" onclick="cambiarEtapaReserva(${idReserva}, 'iniciar')">
+                        <i class="bi bi-droplet-fill me-1"></i>Iniciar
+                    </button>`;
+                    break;
+
+                case 'En Proceso':
+                    botonAccion = `<button class="btn-finalizar" onclick="cambiarEtapaReserva(${idReserva}, 'finalizar')">
+                        <i class="bi bi-check-circle-fill me-1"></i>Finalizar
+                    </button>`;
+                    break;
+
+                case 'Finalizada':
+                    return '';
+
+                case 'Cancelada':
+                    return '';
+
+                default:
+                    return '';
+            }
+
+            return `${botonAccion}<button class="btn-cancelar-reserva" onclick="cambiarEtapaReserva(${idReserva}, 'cancelar')">
+                <i class="bi bi-x-circle me-1"></i>Cancelar
+            </button>`;
+        }
+
+
+        async function cambiarEtapaReserva(idReserva, accion) {
+            const acciones = {
+                'activar': {
+                    url: `/api/reservas/${idReserva}/activar`,
+                    nombre: 'activar'
+                },
+                'iniciar': {
+                    url: `/api/reservas/${idReserva}/iniciar`,
+                    nombre: 'iniciar el lavado'
+                },
+                'finalizar': {
+                    url: `/api/reservas/${idReserva}/finalizar`,
+                    nombre: 'finalizar el lavado'
+                },
+                'cancelar': {
+                    url: `/api/reservas/${idReserva}/cancelar`,
+                    nombre: 'cancelar la reserva'
+                }
+            };
+
+            const accionInfo = acciones[accion];
+            if (!accionInfo) {
+                alert('Acción no válida');
+                return;
+            }
+
+            if (accion === 'finalizar') {
+                abrirModalPago(idReserva);
+                return;
+            }
+
+            if (!confirm(`¿Estás seguro de ${accionInfo.nombre}?`)) return;
 
             try {
-                const response = await fetch(`/api/reservas/${idReserva}/activar`, {
+                const response = await fetch(accionInfo.url, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                     }
                 });
 
                 const result = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(result.message || 'Error al activar reserva');
+                    throw new Error(result.error || result.message || 'Error al realizar la acción');
                 }
 
-                alert('Reserva activada correctamente');
-                cargarReservas();
+                alert(`${result.message}`);
+                cargarReservasHoy();
 
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error: ' + error.message);
+                alert(error.message);
             }
+        }
+
+        async function abrirModalPago(idReserva) {
+            try {
+                const response = await fetch(`/api/reservas/${idReserva}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'No se pudo cargar la reserva');
+                }
+
+                reservaPendienteDePago = result.data;
+                const precio = Number(reservaPendienteDePago.servicio?.costo_servicio || 0);
+                document.getElementById('pagoTotal').textContent = `$ ${precio.toLocaleString()}`;
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPagoReserva')).show();
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        }
+
+        async function confirmarPago() {
+            if (!reservaPendienteDePago) return;
+
+            const metodoPago = document.querySelector('input[name="metodoPago"]:checked')?.value;
+            const boton = document.getElementById('btnConfirmarPago');
+            boton.disabled = true;
+
+            try {
+                const response = await fetch(`/api/reservas/${reservaPendienteDePago.id_reserva}/finalizar`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    }
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || result.message || 'No se pudo finalizar la reserva');
+                }
+
+                const reservaFinalizada = {
+                    ...reservaPendienteDePago,
+                    ...(result.data || {})
+                };
+                bootstrap.Modal.getInstance(document.getElementById('modalPagoReserva'))?.hide();
+                mostrarRecibo(reservaFinalizada, metodoPago);
+                cargarReservasHoy();
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            } finally {
+                boton.disabled = false;
+            }
+        }
+
+        function mostrarRecibo(reserva, metodoPago) {
+            const usuario = reserva.cliente?.usuario || {};
+            const nombreCliente = `${usuario.nombre_usuario || ''} ${usuario.apellido_usuario || ''}`.trim() || 'Sin nombre';
+            const precio = Number(reserva.servicio?.costo_servicio || 0);
+            const fechaServicio = `${reserva.fecha || 'Sin fecha'} ${reserva.hora || ''}`.trim();
+
+            document.getElementById('reciboId').textContent = `#${reserva.id_reserva}`;
+            document.getElementById('reciboCliente').textContent = nombreCliente;
+            document.getElementById('reciboVehiculo').textContent = reserva.vehiculo?.placa_vehiculo || 'N/A';
+            document.getElementById('reciboServicio').textContent = reserva.servicio?.nombre_servicio || 'Sin servicio';
+            document.getElementById('reciboFechaServicio').textContent = fechaServicio;
+            document.getElementById('reciboMetodoPago').textContent = metodoPago;
+            document.getElementById('reciboTotal').textContent = `$ ${precio.toLocaleString()}`;
+            document.getElementById('reciboFechaEmision').textContent = `Emitido el ${new Date().toLocaleString()}`;
+
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalReciboReserva')).show();
         }
 
         // ========== INICIALIZAR ==========
         document.addEventListener('DOMContentLoaded', function() {
             cargarColaboradores();
             cargarTiposVehiculo();
-            cargarReservas();
+            cargarReservasHoy();
 
             // Permitir buscar con Enter
             document.getElementById('numDocBusqueda').addEventListener('keypress', function(e) {

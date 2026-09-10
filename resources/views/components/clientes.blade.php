@@ -23,13 +23,13 @@
 
     <!-- Lista de clientes -->
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-people me-2"></i>Clientes</h5>
-            <button class="btn btn-primary btn-sm" onclick="abrirModalCrearCliente()">
-                <i class="bi bi-plus-circle me-1"></i>Agregar Cliente
-            </button>
-        </div>
         <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Clientes</h5>
+                <button class="btn btn-primary btn-sm" onclick="abrirModalCrearCliente()">
+                    <i class="bi bi-plus-circle me-1"></i>Agregar Cliente
+                </button>
+            </div>
             <p class="text-muted mb-3">Base de datos de clientes del lavadero</p>
 
             <!-- Buscador -->
@@ -74,7 +74,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="formCliente">
+                <form id="formCliente" novalidate>
                     <!-- Campos ocultos para edición -->
                     <input type="hidden" id="editIdUsuario">
                     <input type="hidden" id="editNoDocumento">
@@ -82,58 +82,82 @@
                     <!-- Tipo de Documento -->
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label class="form-label fw-bold">Tipo de Documento</label>
-                            <select class="form-select" id="tipoDocumento">
+                            <label class="form-label fw-bold">Tipo de Documento <span class="text-danger">*</span></label>
+                            <select class="form-select" id="tipoDocumento" required>
+                                <option value="">Selecciona...</option>
                                 <option value="CC">Cédula de Ciudadanía</option>
                                 <option value="CE">Cédula de Extranjería</option>
                                 <option value="NIT">NIT</option>
                                 <option value="PAS">Pasaporte</option>
                             </select>
+                            <div class="invalid-feedback">Selecciona el tipo de documento</div>
                         </div>
                     </div>
 
                     <!-- Nombre y Apellidos -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Nombre del Cliente</label>
-                            <input type="text" class="form-control" id="nombreCliente" placeholder="Ej: Carlos">
+                            <label class="form-label fw-bold">Nombre del Cliente <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nombreCliente" placeholder="Ej: Carlos"
+                                required minlength="2" maxlength="20">
+                            <div class="invalid-feedback">Ingresa el nombre (mínimo 2 caracteres)</div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Apellidos</label>
-                            <input type="text" class="form-control" id="apellidosCliente" placeholder="Ej: Rodriguez">
+                            <label class="form-label fw-bold">Apellidos <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="apellidosCliente" placeholder="Ej: Rodriguez"
+                                required minlength="2" maxlength="20">
+                            <div class="invalid-feedback">Ingresa los apellidos (mínimo 2 caracteres)</div>
                         </div>
                     </div>
 
                     <!-- Número de Documento y Teléfono -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Número de Documento</label>
-                            <input type="text" class="form-control" id="numeroDocumento" placeholder="Ej: 1234567890">
+                            <label class="form-label fw-bold">Número de Documento <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="numeroDocumento" placeholder="Ej: 1234567890"
+                                required minlength="5" maxlength="20"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <div class="invalid-feedback">Ingresa un número de documento válido (solo números)</div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Número celular</label>
-                            <input type="tel" class="form-control" id="numeroCelular" placeholder="Ej: 3001234567">
+                            <label class="form-label fw-bold">Número celular <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="numeroCelular" placeholder="Ej: 3001234567"
+                                required minlength="7" maxlength="15"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <div class="invalid-feedback">Ingresa un teléfono válido (7-15 dígitos)</div>
                         </div>
                     </div>
 
-                    <!-- Email -->
+                    <!-- Email con validación -->
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label class="form-label fw-bold">Email</label>
-                            <input type="email" class="form-control" id="emailCliente" placeholder="Ej: cliente@email.com">
+                            <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="emailCliente"
+                                placeholder="Ej: cliente@email.com" required
+                                pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
+                                autocomplete="email">
+                            <div class="invalid-feedback" id="emailFeedback">
+                                Ingresa un correo válido (ej: cliente@email.com)
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Contraseña (solo para creación o cambio) -->
+                    <!-- Contraseña -->
                     <div class="row mb-3" id="contraseniaContainer">
                         <div class="col-md-12">
-                            <label class="form-label fw-bold" id="contraseniaLabel">Contraseña</label>
-                            <input type="password" class="form-control" id="contraseniaCliente" placeholder="Mínimo 6 caracteres">
-                            <small class="text-muted" id="contraseniaHelp">La contraseña es obligatoria para nuevos clientes</small>
+                            <label class="form-label fw-bold" id="contraseniaLabel">
+                                Contraseña <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="contraseniaCliente"
+                                placeholder="Mínimo 6 caracteres" required minlength="6" maxlength="20">
+                            <small class="text-muted" id="contraseniaHelp">
+                                La contraseña es obligatoria para nuevos clientes
+                            </small>
+                            <div class="invalid-feedback">La contraseña debe tener entre 6 y 20 caracteres</div>
                         </div>
                     </div>
 
-                    <!-- Mensaje informativo (solo para creación) -->
+                    <!-- Mensaje informativo -->
                     <div class="alert alert-info" id="mensajeInfo">
                         <i class="bi bi-info-circle me-2"></i>
                         Después de registrar el cliente, podrás agregar sus vehículos.
@@ -246,6 +270,129 @@
 
         const modal = new bootstrap.Modal(document.getElementById('clienteModal'));
         modal.show();
+    }
+
+    // ========== VALIDACIÓN DEL FORMULARIO DE CLIENTE ==========
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
+    // Validación en tiempo real del email
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailInput = document.getElementById('emailCliente');
+        if (emailInput) {
+            emailInput.addEventListener('input', function() {
+                validarEmailInput(this);
+            });
+            emailInput.addEventListener('blur', function() {
+                validarEmailInput(this);
+            });
+        }
+    });
+
+    function validarEmailInput(input) {
+        const valor = input.value.trim();
+        const feedback = document.getElementById('emailFeedback');
+
+        if (valor === '') {
+            input.classList.remove('is-valid', 'is-invalid');
+            return false;
+        }
+
+        if (emailRegex.test(valor)) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+            return true;
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+            if (feedback) {
+                feedback.textContent = 'Ingresa un correo válido (ej: cliente@email.com)';
+            }
+            return false;
+        }
+    }
+
+    // Validar el formulario completo antes de enviar
+    function validarFormularioCliente() {
+        const form = document.getElementById('formCliente');
+        let valido = true;
+
+        // Limpiar estados previos
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.is-valid').forEach(el => el.classList.remove('is-valid'));
+
+        // Tipo de documento
+        const tipoDoc = document.getElementById('tipoDocumento');
+        if (!tipoDoc.value) {
+            tipoDoc.classList.add('is-invalid');
+            valido = false;
+        } else {
+            tipoDoc.classList.add('is-valid');
+        }
+
+        // Nombre
+        const nombre = document.getElementById('nombreCliente');
+        if (!nombre.value.trim() || nombre.value.trim().length < 2) {
+            nombre.classList.add('is-invalid');
+            valido = false;
+        } else {
+            nombre.classList.add('is-valid');
+        }
+
+        // Apellidos
+        const apellidos = document.getElementById('apellidosCliente');
+        if (!apellidos.value.trim() || apellidos.value.trim().length < 2) {
+            apellidos.classList.add('is-invalid');
+            valido = false;
+        } else {
+            apellidos.classList.add('is-valid');
+        }
+
+        // Documento
+        const documento = document.getElementById('numeroDocumento');
+        if (!documento.value.trim() || documento.value.trim().length < 5) {
+            documento.classList.add('is-invalid');
+            valido = false;
+        } else {
+            documento.classList.add('is-valid');
+        }
+
+        // Teléfono
+        const telefono = document.getElementById('numeroCelular');
+        const telefonoLimpio = telefono.value.replace(/\D/g, '');
+        if (telefonoLimpio.length < 7 || telefonoLimpio.length > 15) {
+            telefono.classList.add('is-invalid');
+            valido = false;
+        } else {
+            telefono.classList.add('is-valid');
+        }
+
+        // ✅ Email
+        const email = document.getElementById('emailCliente');
+        const emailValor = email.value.trim();
+        if (!emailValor) {
+            email.classList.add('is-invalid');
+            document.getElementById('emailFeedback').textContent = 'El correo es obligatorio';
+            valido = false;
+        } else if (!emailRegex.test(emailValor)) {
+            email.classList.add('is-invalid');
+            document.getElementById('emailFeedback').textContent = 'Ingresa un correo válido (ej: cliente@email.com)';
+            valido = false;
+        } else {
+            email.classList.add('is-valid');
+        }
+
+        // Contraseña (solo si es requerida)
+        const contrasenia = document.getElementById('contraseniaCliente');
+        if (contrasenia.required) {
+            if (!contrasenia.value || contrasenia.value.length < 6) {
+                contrasenia.classList.add('is-invalid');
+                valido = false;
+            } else {
+                contrasenia.classList.add('is-valid');
+            }
+        }
+
+        return valido;
     }
 
     // ========== CARGAR CLIENTES ==========
