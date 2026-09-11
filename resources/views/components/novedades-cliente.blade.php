@@ -117,10 +117,12 @@
 
                 <h1 class="titulo-principal">Novedades</h1>
 
+                @if(auth()->user()->id_rol != 3)
                 <div class="grupo-botones">
                     <a href="{{ url('/novedades-interno') }}" class="btn-interna">Interna</a>
                     <a href="{{ url('/novedades-cliente') }}" class="btn-cliente">Cliente</a>
                 </div>
+                @endif
 
                 <div class="contenedor-novedades">
                     <h2 class="subtitulo_seccion">Novedad Cliente</h2>
@@ -140,36 +142,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
                     </tbody>
                 </table>
                 <div class="modal fade" id="modalNovedad" tabindex="-1" aria-labelledby="modalNovedadLabel" aria-hidden="true">
@@ -180,206 +152,225 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-    <form>
-        <div class="mb-3">
-            <h2>Tipo de Novedad</h2>
-            <select class="form-select" id="selectTipoNovedad">
-                <option value="inconformidad">Inconformidad con el servicio</option>
-                <option value="retraso">Retraso en la entrega</option>
-                <option value="danos_vehiculo">Daños en el vehículo</option>
-            </select>
-        </div>
+                                <form>
+                                    <div class="mb-3">
+                                        <h2>Tipo de Novedad</h2>
+                                        <select class="form-select" id="selectTipoNovedad">
+                                            <option value="inconformidad">Inconformidad con el servicio</option>
+                                            <option value="retraso">Retraso en la entrega</option>
+                                            <option value="danos_vehiculo">Daños en el vehículo</option>
+                                        </select>
+                                    </div>
 
-        <div class="mb-3">
-            <h2>Reserva</h2>
-            <select class="form-select" id="selectReserva">
-                <option value="">Cargando reservas...</option>
-            </select>
-        </div>
+                                    <div class="mb-3">
+                                        <h2>Reserva</h2>
+                                        <select class="form-select" id="selectReserva">
+                                            <option value="">Cargando reservas...</option>
+                                        </select>
+                                    </div>
 
-        <div class="mb-3">
-            <h2>Cliente</h2>
-            <input type="text" class="form-control" id="inputCliente" disabled>
-        </div>
+                                    <div class="mb-3">
+                                        <h2>Cliente</h2>
+                                        <input type="text" class="form-control" id="inputCliente" disabled>
+                                    </div>
 
-        <div class="mb-3">
-            <h2>Colaborador</h2>
-            <input type="text" class="form-control" id="inputColaborador" disabled>
-        </div>
+                                    <div class="mb-3">
+                                        <h2>Colaborador</h2>
+                                        <input type="text" class="form-control" id="inputColaborador" disabled>
+                                    </div>
 
-        <div class="mb-3">
-            <h2>Ticket de Novedad</h2>
-            <input type="text" class="form-control" id="inputTicket" disabled placeholder="Se genera automáticamente al guardar">
-        </div>
+                                    <div class="mb-3">
+                                        <h2>Ticket de Novedad</h2>
+                                        <input type="text" class="form-control" id="inputTicket" disabled placeholder="Se genera automáticamente al guardar">
+                                    </div>
 
-        <div class="mb-3">
-            <h2>Descripcion</h2>
-            <textarea class="form-control" id="inputDescripcion" rows="3"></textarea>
-        </div>
-    </form>
-</div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
-    <button type="button" id="btnGuardarNovedad" class="btn btn-primary btn-sm" style="background-color: #2B78E4; border: none;">Guardar</button>
-</div>
+                                    <div class="mb-3">
+                                        <h2>Descripcion</h2>
+                                        <textarea class="form-control" id="inputDescripcion" rows="3"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" id="btnGuardarNovedad" class="btn btn-primary btn-sm" style="background-color: #2B78E4; border: none;">Guardar</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
             </main>
         </div>
     </div>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-let reservasCache = [];
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let reservasCache = [];
+        const clienteAutenticadoId = @json(optional(auth()->user()->cliente)->no_documento_cliente);
 
-async function cargarReservas() {
-    try {
-        const response = await fetch('/api/reservas', {
-            method: 'GET',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
-        });
-        const resultado = await response.json();
-        const todasLasReservas = resultado.success ? resultado.data : resultado;
+        async function cargarReservas() {
+            try {
+                const response = await fetch('/api/reservas', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const resultado = await response.json();
+                const todasLasReservas = resultado.success ? resultado.data : resultado;
 
-        const reservas = todasLasReservas.filter(r => r.etapa_lavado === 'Finalizado');
+                const reservas = todasLasReservas.filter(r =>
+                    r.etapa_lavado === 'Finalizada' &&
+                    (!clienteAutenticadoId || r.no_documento_cliente == clienteAutenticadoId)
+                );
 
-        reservasCache = reservas;
+                reservasCache = reservas;
 
-        const selectHTML = document.getElementById('selectReserva');
-        selectHTML.innerHTML = '<option value="">-- Seleccione la Reserva --</option>';
+                const selectHTML = document.getElementById('selectReserva');
+                selectHTML.innerHTML = '<option value="">-- Seleccione la Reserva --</option>';
 
-        reservas.forEach(reserva => {
-            const nombreCliente = reserva.cliente?.usuario
-                ? `${reserva.cliente.usuario.nombre_usuario} ${reserva.cliente.usuario.apellido_usuario}`
-                : 'Cliente desconocido';
+                reservas.forEach(reserva => {
+                    const nombreCliente = reserva.cliente?.usuario ?
+                        `${reserva.cliente.usuario.nombre_usuario} ${reserva.cliente.usuario.apellido_usuario}` :
+                        'Cliente desconocido';
 
-            const opcion = document.createElement('option');
-            opcion.value = reserva.id_reserva;
-            opcion.textContent = `Reserva #${reserva.id_reserva} - ${nombreCliente} - Placa ${reserva.placa_vehiculo} - ${reserva.fecha}`;
-            selectHTML.appendChild(opcion);
-        });
+                    const opcion = document.createElement('option');
+                    opcion.value = reserva.id_reserva;
+                    opcion.textContent = `Reserva #${reserva.id_reserva} - ${nombreCliente} - Placa ${reserva.placa_vehiculo} - ${reserva.fecha}`;
+                    selectHTML.appendChild(opcion);
+                });
 
-        if (reservas.length === 0) {
-            selectHTML.innerHTML = '<option value="">No hay reservas finalizadas disponibles</option>';
-        }
-    } catch (error) {
-        console.error("Error cargando las reservas:", error);
-    }
-}
-function autocompletarReserva() {
-    const idReserva = document.getElementById('selectReserva').value;
-    const reserva = reservasCache.find(r => r.id_reserva == idReserva);
-
-    const inputCliente = document.getElementById('inputCliente');
-    const inputColaborador = document.getElementById('inputColaborador');
-
-    if (!reserva) {
-        inputCliente.value = '';
-        inputColaborador.value = '';
-        return;
-    }
-
-    inputCliente.value = reserva.cliente?.usuario
-        ? `${reserva.cliente.usuario.nombre_usuario} ${reserva.cliente.usuario.apellido_usuario} (CC ${reserva.no_documento_cliente})`
-        : `Cédula ${reserva.no_documento_cliente}`;
-
-    inputColaborador.value = reserva.colaborador?.usuario
-        ? `${reserva.colaborador.usuario.nombre_usuario} ${reserva.colaborador.usuario.apellido_usuario} (CC ${reserva.no_documento_colaborador})`
-        : `Cédula ${reserva.no_documento_colaborador}`;
-}
-
-async function guardarNovedad() {
-    const idReserva = document.getElementById('selectReserva').value;
-    const reserva = reservasCache.find(r => r.id_reserva == idReserva);
-
-    if (!reserva) {
-        alert('Por favor selecciona una reserva.');
-        return;
-    }
-
-    const payload = {
-        tipo_novedad: document.getElementById('selectTipoNovedad').value,
-        descripcion_novedad: document.getElementById('inputDescripcion').value,
-        no_documento_colaborador: reserva.no_documento_colaborador,
-        no_documento_cliente: reserva.no_documento_cliente,
-        id_reserva: reserva.id_reserva
-    };
-
-    try {
-        const response = await fetch('/api/novedades', {
-            method: 'POST',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const resultado = await response.json();
-
-        if (!response.ok) {
-            console.error(resultado);
-            alert(resultado.message || 'Ocurrió un error al guardar la novedad.');
-            return;
+                if (reservas.length === 0) {
+                    selectHTML.innerHTML = '<option value="">No hay reservas finalizadas disponibles</option>';
+                }
+            } catch (error) {
+                console.error("Error cargando las reservas:", error);
+            }
         }
 
-        const modalEl = document.getElementById('modalNovedad');
-        bootstrap.Modal.getInstance(modalEl).hide();
+        function autocompletarReserva() {
+            const idReserva = document.getElementById('selectReserva').value;
+            const reserva = reservasCache.find(r => r.id_reserva == idReserva);
 
-        document.getElementById('inputDescripcion').value = '';
-        document.getElementById('inputCliente').value = '';
-        document.getElementById('inputColaborador').value = '';
-        document.getElementById('selectReserva').value = '';
+            const inputCliente = document.getElementById('inputCliente');
+            const inputColaborador = document.getElementById('inputColaborador');
 
-        cargarNovedades();
+            if (!reserva) {
+                inputCliente.value = '';
+                inputColaborador.value = '';
+                return;
+            }
 
-    } catch (error) {
-        console.error("Error guardando la novedad:", error);
-        alert('Ocurrió un error de conexión al guardar.');
-    }
-}
+            inputCliente.value = reserva.cliente?.usuario ?
+                `${reserva.cliente.usuario.nombre_usuario} ${reserva.cliente.usuario.apellido_usuario} (CC ${reserva.no_documento_cliente})` :
+                `Cédula ${reserva.no_documento_cliente}`;
 
-async function cargarNovedades() {
-    try {
-        const response = await fetch('/api/novedades', {
-            method: 'GET',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
-        });
-        const resultado = await response.json();
-        const novedades = resultado.success ? resultado.data : resultado;
+            inputColaborador.value = reserva.colaborador?.usuario ?
+                `${reserva.colaborador.usuario.nombre_usuario} ${reserva.colaborador.usuario.apellido_usuario} (CC ${reserva.no_documento_colaborador})` :
+                `Cédula ${reserva.no_documento_colaborador}`;
+        }
 
-        // Solo mostramos las novedades de CLIENTE (ticket empieza con 'C')
-        const deCliente = novedades.filter(n => n.ticket_novedad && n.ticket_novedad.startsWith('C'));
+        async function guardarNovedad() {
+            const idReserva = document.getElementById('selectReserva').value;
+            const reserva = reservasCache.find(r => r.id_reserva == idReserva);
 
-        const tbody = document.querySelector('table.table tbody');
-        tbody.innerHTML = '';
+            if (!reserva) {
+                alert('Por favor selecciona una reserva.');
+                return;
+            }
 
-        deCliente.forEach((novedad, index) => {
-            const fecha = novedad.created_at
-                ? new Date(novedad.created_at).toLocaleDateString('es-CO')
-                : '-';
-            const placa = novedad.reserva?.placa_vehiculo ?? '-';
+            const payload = {
+                tipo_novedad: document.getElementById('selectTipoNovedad').value,
+                descripcion_novedad: document.getElementById('inputDescripcion').value,
+                no_documento_colaborador: reserva.no_documento_colaborador,
+                no_documento_cliente: reserva.no_documento_cliente,
+                id_reserva: reserva.id_reserva
+            };
 
-            const fila = document.createElement('tr');
-            fila.innerHTML = `
+            try {
+                const response = await fetch('/api/novedades', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const resultado = await response.json();
+
+                if (!response.ok) {
+                    console.error(resultado);
+                    alert(resultado.message || 'Ocurrió un error al guardar la novedad.');
+                    return;
+                }
+
+                const modalEl = document.getElementById('modalNovedad');
+                bootstrap.Modal.getInstance(modalEl).hide();
+
+                document.getElementById('inputDescripcion').value = '';
+                document.getElementById('inputCliente').value = '';
+                document.getElementById('inputColaborador').value = '';
+                document.getElementById('selectReserva').value = '';
+
+                cargarNovedades();
+
+            } catch (error) {
+                console.error("Error guardando la novedad:", error);
+                alert('Ocurrió un error de conexión al guardar.');
+            }
+        }
+
+        async function cargarNovedades() {
+            try {
+                const response = await fetch('/api/novedades', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const resultado = await response.json();
+                const novedades = resultado.success ? resultado.data : resultado;
+
+                // Solo mostramos las novedades de CLIENTE (ticket empieza con 'C')
+                const deCliente = novedades.filter(n =>
+                    n.ticket_novedad &&
+                    n.ticket_novedad.startsWith('C') &&
+                    (!clienteAutenticadoId || n.no_documento_cliente == clienteAutenticadoId)
+                );
+
+                const tbody = document.querySelector('table.table tbody');
+                tbody.innerHTML = '';
+
+                deCliente.forEach((novedad, index) => {
+                    const fecha = novedad.created_at ?
+                        new Date(novedad.created_at).toLocaleDateString('es-CO') :
+                        '-';
+                    const placa = novedad.reserva?.placa_vehiculo ?? '-';
+
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
                 <th scope="row">${index + 1}</th>
                 <td>${novedad.ticket_novedad}</td>
                 <td>${novedad.no_documento_cliente ?? '-'}</td>
                 <td>${placa}</td>
                 <td>${fecha}</td>
-                <td>${novedad.etapo_novedad}</td>
+                <td>${novedad.etapa_novedad}</td>
                 <td><button class="btn btn-sm btn-outline-primary">Ver</button></td>
             `;
-            tbody.appendChild(fila);
-        });
-    } catch (error) {
-        console.error("Error cargando las novedades:", error);
-    }
-}
+                    tbody.appendChild(fila);
+                });
+            } catch (error) {
+                console.error("Error cargando las novedades:", error);
+            }
+        }
 
-document.addEventListener('DOMContentLoaded', () => {
-    cargarReservas();
-    cargarNovedades();
-    document.getElementById('selectReserva').addEventListener('change', autocompletarReserva);
-    document.getElementById('btnGuardarNovedad').addEventListener('click', guardarNovedad);
-});
-</script>
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarReservas();
+            cargarNovedades();
+            document.getElementById('selectReserva').addEventListener('change', autocompletarReserva);
+            document.getElementById('btnGuardarNovedad').addEventListener('click', guardarNovedad);
+        });
+    </script>
 </body>
+
 </html>

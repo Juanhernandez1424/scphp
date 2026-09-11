@@ -50,6 +50,15 @@ class ReservaService
             ->get();
     }
 
+    public function colaboradorDisponible(int $colaboradorId, string $fecha, string $hora): bool
+    {
+        return !Reserva::where('no_documento_colaborador', $colaboradorId)
+            ->where('fecha', $fecha)
+            ->where('hora', $hora)
+            ->where('etapa_lavado', '!=', 'Cancelada')
+            ->exists();
+    }
+
     public function getByEtapaLavado(StoreReservaRequest $dto): Reserva
     {
         return Reserva::with([
@@ -75,6 +84,16 @@ class ReservaService
     public function registrarReserva(StoreReservaDTO $dto): Reserva
     {
         return DB::transaction(function () use ($dto) {
+            if (!$this->colaboradorDisponible(
+                $dto->noDocumentoColaborador,
+                $dto->fecha,
+                $dto->hora
+            )) {
+                throw new \RuntimeException(
+                    'El colaborador ya tiene una reserva para esa fecha y hora. Cambia de colaborador, hora o día.'
+                );
+            }
+
             $reserva = Reserva::create([
                 'no_documento_cliente' => $dto->noDocumentoCliente,
                 'placa_vehiculo' => $dto->placaVehiculo,
@@ -93,12 +112,12 @@ class ReservaService
         });
     }
     public function actualizarEtapaLavado(int $idReserva, string $etapa): Reserva
-{
-    $reserva = Reserva::findOrFail($idReserva);
-    $reserva->update(['etapa_lavado' => $etapa]);
+    {
+        $reserva = Reserva::findOrFail($idReserva);
+        $reserva->update(['etapa_lavado' => $etapa]);
 
-    return $reserva->fresh();
-}
+        return $reserva->fresh();
+    }
 
     public function activarReserva(int $idReserva): Reserva
     {

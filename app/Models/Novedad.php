@@ -21,7 +21,7 @@ class Novedad extends Model
         'ticket_novedad',
         'no_documento_colaborador',
         'no_documento_cliente',
-        'etapo_novedad',
+        'etapa_novedad',
         'id_reserva',
         'estado_novedad'
     ];

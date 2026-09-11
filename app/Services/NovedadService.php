@@ -45,7 +45,7 @@ class NovedadService
                 'ticket_novedad' => $this->generarTicket($esInterna),
                 'no_documento_colaborador' => $dto->noDocumentoColaborador,
                 'no_documento_cliente' => $dto->noDocumentoCliente,
-                'etapo_novedad' => $dto->etapoNovedad ?? 'Pendiente',
+                'etapa_novedad' => $dto->etapaNovedad ?? 'Pendiente',
                 'id_reserva' => $dto->idReserva,
                 'estado_novedad' => true
             ]);

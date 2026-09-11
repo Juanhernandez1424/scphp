@@ -55,6 +55,11 @@ class ReservaController extends Controller
                 'message' => 'Reserva creada correctamente',
                 'data' => $reserva
             ], 201);
+        } catch (\RuntimeException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 409);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -62,6 +67,29 @@ class ReservaController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function disponibilidad(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'no_documento_colaborador' => 'required|integer',
+            'fecha' => 'required|date',
+            'hora' => 'required|date_format:H:i'
+        ]);
+
+        $disponible = $this->reservaService->colaboradorDisponible(
+            (int) $validated['no_documento_colaborador'],
+            $validated['fecha'],
+            $validated['hora']
+        );
+
+        return response()->json([
+            'success' => true,
+            'disponible' => $disponible,
+            'message' => $disponible
+                ? 'El colaborador está disponible para esta ventana.'
+                : 'El colaborador ya está ocupado. Cambia de colaborador, hora o día.'
+        ]);
     }
 
     /**
@@ -233,12 +261,9 @@ class ReservaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     public function update(Request $request, $id): JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
         try {
-            $request->validate([
-                'etapa_lavado' => 'required|string|in:Pendiente,En Proceso,Finalizado'
-            ]);
 
             $reserva = $this->reservaService->actualizarEtapaLavado((int)$id, $request->etapa_lavado);
 
@@ -261,4 +286,4 @@ class ReservaController extends Controller
             ], 500);
         }
     }
-     }
+}

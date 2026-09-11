@@ -9,7 +9,7 @@ class StoreNovedadDTO
         public string $descripcionNovedad,
         public int $noDocumentoColaborador,
         public ?int $noDocumentoCliente,
-        public ?string $etapoNovedad,
+        public ?string $etapaNovedad,
         public ?int $idReserva
     ) {}
 
@@ -20,7 +20,7 @@ class StoreNovedadDTO
             descripcionNovedad: $data['descripcion_novedad'],
             noDocumentoColaborador: (int)$data['no_documento_colaborador'],
             noDocumentoCliente: isset($data['no_documento_cliente']) ? (int)$data['no_documento_cliente'] : null,
-            etapoNovedad: $data['etapo_novedad'] ?? null,
+            etapaNovedad: $data['etapa_novedad'] ?? null,
             idReserva: isset($data['id_reserva']) ? (int)$data['id_reserva'] : null
         );
     }

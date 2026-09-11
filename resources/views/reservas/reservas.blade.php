@@ -561,6 +561,7 @@
                         <!-- ====== COLUMNA IZQUIERDA: BUSCADOR + FORMULARIO ====== -->
                         <div class="col-lg-6">
 
+                            @if(auth()->user()->id_rol != 3)
                             <!-- Buscador de Cliente -->
                             <div class="card-custom mb-4">
                                 <div class="card-title">Buscar Cliente</div>
@@ -582,10 +583,15 @@
 
                                 <div id="resultadoBusqueda"></div>
                             </div>
+                            @endif
 
                             <!-- Formulario de Reserva -->
                             <div class="card-custom" id="formularioReserva" style="display: none;">
                                 <div class="card-title">Crear Reserva</div>
+
+                                @if(auth()->user()->id_rol == 3)
+                                <div id="resultadoBusqueda"></div>
+                                @endif
 
                                 <form id="formReserva" onsubmit="return false;">
                                     @csrf
@@ -637,12 +643,16 @@
                                         </div>
                                     </div>
 
+                                    <div id="disponibilidadReserva" class="alert py-2 px-3 mb-4" role="status"
+                                        style="display: none;"></div>
+
                                     <div class="mb-4">
                                         <label class="label-form">Precio del servicio</label>
                                         <div class="precio-servicio" id="precioMostrado">$ 0</div>
                                     </div>
 
-                                    <button type="button" class="btn-iniciar" onclick="crearReserva()">
+                                    <button type="button" id="btnCrearReserva" class="btn-iniciar" onclick="crearReserva()"
+                                        disabled>
                                         <i class="bi bi-calendar-plus me-2"></i> Crear Reserva
                                     </button>
                                 </form>
@@ -767,6 +777,8 @@
         let serviciosData = [];
         let vehiculosCliente = [];
         let reservaPendienteDePago = null;
+        const esClienteAutenticado = @json(auth()->user()->id_rol == 3);
+        const clienteAutenticado = @json($clienteAutenticado ?? null);
 
         // ========== BUSCAR CLIENTE ==========
         async function buscarCliente() {
@@ -874,11 +886,11 @@
             resultadoDiv.innerHTML = `
                 <div class="client-found">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="fw-bold d-flex align-items-center gap-2">
+                            <span class="fw-bold d-flex align-items-center gap-2">
                             <i class="bi bi-person text-success"></i>
-                            <span class="text-dark fw-bold">Cliente encontrado</span>
-                        </span>
-                        <button class="btn-cambiar" onclick="limpiarBusqueda()">Cambiar</button>
+                                <span class="text-dark fw-bold">${esClienteAutenticado ? 'Información del cliente' : 'Cliente encontrado'}</span>
+                            </span>
+                            ${esClienteAutenticado ? '' : '<button class="btn-cambiar" onclick="limpiarBusqueda()">Cambiar</button>'}
                     </div>
                     <div class="client-name">${nombreCompleto}</div>
                     <div class="client-info">
@@ -903,10 +915,10 @@
             // Establecer fecha y hora por defecto
             const hoy = new Date();
             const fechaHoy = hoy.toISOString().split('T')[0];
-            const horaActual = hoy.toTimeString().slice(0, 5);
 
             document.getElementById('fechaReserva').value = fechaHoy;
-            document.getElementById('horaReserva').value = horaActual;
+            document.getElementById('horaReserva').value = '';
+            actualizarDisponibilidad();
 
             document.getElementById('selectColaborador').focus();
         }
@@ -1178,6 +1190,69 @@
             }
         }
 
+        let consultaDisponibilidad = 0;
+
+        async function actualizarDisponibilidad() {
+            const colaboradorId = document.getElementById('selectColaborador').value;
+            const fecha = document.getElementById('fechaReserva').value;
+            const hora = document.getElementById('horaReserva').value;
+            const estado = document.getElementById('disponibilidadReserva');
+            const boton = document.getElementById('btnCrearReserva');
+            const consultaActual = ++consultaDisponibilidad;
+
+            boton.disabled = true;
+
+            if (!colaboradorId || !fecha || !hora) {
+                estado.style.display = 'none';
+                return false;
+            }
+
+            estado.className = 'alert alert-info py-2 px-3 mb-4';
+            estado.textContent = 'Consultando disponibilidad...';
+            estado.style.display = 'block';
+
+            try {
+                const parametros = new URLSearchParams({
+                    no_documento_colaborador: colaboradorId,
+                    fecha,
+                    hora
+                });
+                const response = await fetch(`/api/reservas/disponibilidad?${parametros}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const result = await response.json();
+
+                if (consultaActual !== consultaDisponibilidad) {
+                    return false;
+                }
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'No se pudo consultar la disponibilidad');
+                }
+
+                const disponible = result.disponible === true;
+                estado.className = disponible ?
+                    'alert alert-success py-2 px-3 mb-4' :
+                    'alert alert-danger py-2 px-3 mb-4';
+                estado.textContent = disponible ?
+                    'Disponible: el colaborador puede atender esta reserva.' :
+                    'No disponible: cambia de colaborador, hora o día.';
+                boton.disabled = !disponible;
+                return disponible;
+            } catch (error) {
+                if (consultaActual !== consultaDisponibilidad) {
+                    return false;
+                }
+
+                estado.className = 'alert alert-danger py-2 px-3 mb-4';
+                estado.textContent = error.message;
+                boton.disabled = true;
+                return false;
+            }
+        }
+
         // ========== CREAR RESERVA ==========
         async function crearReserva() {
             const clienteId = document.getElementById('clienteId').value;
@@ -1221,6 +1296,11 @@
 
             if (!hora) {
                 alert('Selecciona una hora para la reserva');
+                return;
+            }
+
+            if (!(await actualizarDisponibilidad())) {
+                alert('El colaborador no está disponible. Cambia de colaborador, hora o día.');
                 return;
             }
 
@@ -1375,6 +1455,22 @@
         // ✅ NUEVA FUNCIÓN: Genera el botón correcto según la etapa
         function generarBotonEtapa(idReserva, etapa) {
             let botonAccion = '';
+
+            if (esClienteAutenticado) {
+                if (etapa === 'Pendiente') {
+                    botonAccion = `<button class="btn-activar" onclick="cambiarEtapaReserva(${idReserva}, 'activar')">
+                        <i class="bi bi-play-fill me-1"></i>Activar
+                    </button>`;
+                }
+
+                if (['Pendiente', 'Activa'].includes(etapa)) {
+                    return `${botonAccion}<button class="btn-cancelar-reserva" onclick="cambiarEtapaReserva(${idReserva}, 'cancelar')">
+                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                    </button>`;
+                }
+
+                return '';
+            }
 
             switch (etapa) {
                 case 'Pendiente':
@@ -1552,6 +1648,20 @@
             cargarColaboradores();
             cargarTiposVehiculo();
             cargarReservasHoy();
+
+            if (esClienteAutenticado) {
+                if (clienteAutenticado) {
+                    mostrarClienteEncontrado(clienteAutenticado);
+                } else {
+                    document.getElementById('formularioReserva').style.display = 'block';
+                    document.getElementById('resultadoBusqueda').innerHTML =
+                        '<div class="alert alert-danger">No hay un cliente asociado a este usuario.</div>';
+                }
+            }
+
+            document.getElementById('selectColaborador').addEventListener('change', actualizarDisponibilidad);
+            document.getElementById('fechaReserva').addEventListener('change', actualizarDisponibilidad);
+            document.getElementById('horaReserva').addEventListener('change', actualizarDisponibilidad);
 
             // Permitir buscar con Enter
             document.getElementById('numDocBusqueda').addEventListener('keypress', function(e) {

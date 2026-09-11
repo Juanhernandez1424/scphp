@@ -233,8 +233,8 @@
                 tipo_novedad: document.getElementById('selectTipoNovedadInterna').value,
                 descripcion_novedad: document.getElementById('inputDescripcionInterna').value,
                 no_documento_colaborador: parseInt(noDocumentoColaborador),
-                etapo_novedad: "Pendiente",
-                estado_novedad: 1
+                etapa_novedad: "Pendiente",
+                estado_novedad: 1,
                 no_documento_colaborador: parseInt(noDocumentoColaborador)
                 // no se envía no_documento_cliente ni id_reserva: quedan null (novedad interna)
             };
@@ -242,7 +242,10 @@
             try {
                 const response = await fetch('/api/novedades', {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(payload)
                 });
 
@@ -272,7 +275,10 @@
             try {
                 const response = await fetch('/api/novedades', {
                     method: 'GET',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
                 });
                 const resultado = await response.json();
                 const novedades = resultado.success ? resultado.data : resultado;
@@ -284,9 +290,9 @@
                 tbody.innerHTML = '';
 
                 internas.forEach((novedad, index) => {
-                    const fecha = novedad.created_at
-                        ? new Date(novedad.created_at).toLocaleDateString('es-CO')
-                        : '-';
+                    const fecha = novedad.created_at ?
+                        new Date(novedad.created_at).toLocaleDateString('es-CO') :
+                        '-';
 
                     const fila = document.createElement('tr');
                     fila.innerHTML = `
@@ -294,7 +300,7 @@
                         <td>${novedad.ticket_novedad}</td>
                         <td>${novedad.no_documento_colaborador ?? '-'}</td>
                         <td>${fecha}</td>
-                        <td>${novedad.etapo_novedad}</td>
+                        <td>${novedad.etapa_novedad}</td>
                         <td><button class="btn btn-sm btn-outline-primary">Ver</button></td>
                     `;
                     tbody.appendChild(fila);

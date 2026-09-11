@@ -42,6 +42,7 @@ Route::apiResource('coordinadores', CoordinadorController::class);
 Route::apiResource('vehiculos', VehiculoController::class);
 
 Route::get('/reservas/fecha/{fecha}', [ReservaController::class, 'getByDate']);
+Route::get('/reservas/disponibilidad', [ReservaController::class, 'disponibilidad']);
 Route::put('/reservas/{id}/activar', [ReservaController::class, 'activarReserva']);
 Route::put('/reservas/{id}/iniciar', [ReservaController::class, 'iniciarReserva']);
 Route::put('/reservas/{id}/finalizar', [ReservaController::class, 'finalizarReserva']);
