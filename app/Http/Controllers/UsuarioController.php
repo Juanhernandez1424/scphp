@@ -105,9 +105,31 @@ class UsuarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //
+{
+    try {
+        $dto = \App\DTOs\StoreUpdateUsuarioDTO::fromRequest($request->all());
+
+        $usuario = $this->usuarioService->actualizarUsuario((int)$id, $dto);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario actualizado correctamente',
+            'data' => $usuario
+        ], 200);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado',
+            'error' => $e->getMessage()
+        ], 404);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar el usuario',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Remove the specified resource from storage.
@@ -115,8 +137,27 @@ class UsuarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+public function destroy($id)
+{
+    try {
+        $this->usuarioService->eliminarUsuario((int)$id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario eliminado correctamente'
+        ], 200);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Usuario no encontrado',
+            'error' => $e->getMessage()
+        ], 404);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al eliminar el usuario',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 }

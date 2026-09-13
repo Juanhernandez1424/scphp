@@ -101,6 +101,10 @@
         .modal-body h2:first-child {
             margin-top: 0;
         }
+
+        .detalle-novedad p {
+            margin-bottom: 4px;
+        }
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -144,6 +148,8 @@
                     <tbody>
                     </tbody>
                 </table>
+
+                <!-- Modal Crear Novedad -->
                 <div class="modal fade" id="modalNovedad" tabindex="-1" aria-labelledby="modalNovedadLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -196,6 +202,55 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Modal Ver Detalle de Novedad -->
+                <div class="modal fade" id="modalVerNovedad" tabindex="-1" aria-labelledby="modalVerNovedadLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalVerNovedadLabel" style="font-family: 'PT Serif Bold', serif; font-size: 1.5rem;">Detalle de Novedad</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body detalle-novedad">
+                                <div id="verNovedadCargando" class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </div>
+                                <div id="verNovedadContenido" style="display: none;">
+                                    <h2>Ticket</h2>
+                                    <p id="verTicket">-</p>
+
+                                    <h2>Tipo de Novedad</h2>
+                                    <p id="verTipo">-</p>
+
+                                    <h2>Cliente</h2>
+                                    <p id="verCliente">-</p>
+
+                                    <h2>Colaborador</h2>
+                                    <p id="verColaborador">-</p>
+
+                                    <h2>Placa</h2>
+                                    <p id="verPlaca">-</p>
+
+                                    <h2>Fecha Reporte</h2>
+                                    <p id="verFecha">-</p>
+
+                                    <h2>Etapa</h2>
+                                    <p id="verEtapa">-</p>
+
+                                    <h2>Descripción</h2>
+                                    <p id="verDescripcion">-</p>
+                                </div>
+                                <div id="verNovedadError" class="alert alert-danger" style="display: none;"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </main>
         </div>
@@ -355,12 +410,73 @@
                 <td>${placa}</td>
                 <td>${fecha}</td>
                 <td>${novedad.etapa_novedad}</td>
-                <td><button class="btn btn-sm btn-outline-primary">Ver</button></td>
+                <td><button class="btn btn-sm btn-outline-primary" onclick="verNovedad(${novedad.id_novedad})">Ver</button></td>
             `;
                     tbody.appendChild(fila);
                 });
             } catch (error) {
                 console.error("Error cargando las novedades:", error);
+            }
+        }
+
+        // ========== VER DETALLE DE NOVEDAD ==========
+        async function verNovedad(idNovedad) {
+            const modalEl = document.getElementById('modalVerNovedad');
+            const modal = new bootstrap.Modal(modalEl);
+
+            const cargando = document.getElementById('verNovedadCargando');
+            const contenido = document.getElementById('verNovedadContenido');
+            const errorDiv = document.getElementById('verNovedadError');
+
+            cargando.style.display = 'block';
+            contenido.style.display = 'none';
+            errorDiv.style.display = 'none';
+
+            modal.show();
+
+            try {
+                const response = await fetch(`/api/novedades/${idNovedad}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const resultado = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(resultado.message || 'No se pudo obtener la novedad');
+                }
+
+                const novedad = resultado.data;
+
+                const nombreCliente = novedad.cliente?.usuario ?
+                    `${novedad.cliente.usuario.nombre_usuario} ${novedad.cliente.usuario.apellido_usuario} (CC ${novedad.no_documento_cliente})` :
+                    (novedad.no_documento_cliente ?? '-');
+
+                const nombreColaborador = novedad.colaborador?.usuario ?
+                    `${novedad.colaborador.usuario.nombre_usuario} ${novedad.colaborador.usuario.apellido_usuario} (CC ${novedad.no_documento_colaborador})` :
+                    (novedad.no_documento_colaborador ?? '-');
+
+                document.getElementById('verTicket').textContent = novedad.ticket_novedad ?? '-';
+                document.getElementById('verTipo').textContent = novedad.tipo_novedad ?? '-';
+                document.getElementById('verCliente').textContent = nombreCliente;
+                document.getElementById('verColaborador').textContent = nombreColaborador;
+                document.getElementById('verPlaca').textContent = novedad.reserva?.placa_vehiculo ?? '-';
+                document.getElementById('verFecha').textContent = novedad.created_at ?
+                    new Date(novedad.created_at).toLocaleDateString('es-CO') : '-';
+                document.getElementById('verEtapa').textContent = novedad.etapa_novedad ?? '-';
+                document.getElementById('verDescripcion').textContent = novedad.descripcion_novedad ?? 'Sin descripción';
+
+                cargando.style.display = 'none';
+                contenido.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error cargando el detalle de la novedad:', error);
+                cargando.style.display = 'none';
+                errorDiv.textContent = 'Error al cargar el detalle: ' + error.message;
+                errorDiv.style.display = 'block';
             }
         }
 

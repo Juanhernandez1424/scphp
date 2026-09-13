@@ -41,4 +41,16 @@ class ClienteService
     {
         return Cliente::where('no_documento_cliente', $noDocumentoCliente)->exists();
     }
+    public function actualizarPlan(string $noDocumentoCliente, ?int $idPlan): Cliente
+    {
+        $cliente = Cliente::findOrFail($noDocumentoCliente);
+        $cliente->update(['id_plan' => $idPlan]);
+        return $cliente->load(['usuario', 'vehiculo']);
+    }
+
+    public function eliminar(string $noDocumentoCliente): void
+    {
+        $cliente = Cliente::findOrFail($noDocumentoCliente);
+        $cliente->delete();
+    }
 }

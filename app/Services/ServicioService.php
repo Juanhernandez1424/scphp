@@ -46,4 +46,25 @@ class ServicioService
             ]);
         });
     }
+    public function actualizarServicio(int $idServicio, StoreServicioDTO $dto): Servicio
+{
+    return DB::transaction(function () use ($idServicio, $dto) {
+        $servicio = Servicio::findOrFail($idServicio);
+
+        $servicio->update([
+            'nombre_servicio' => $dto->nombreServicio,
+            'descripcion_servicio' => $dto->descripcionServicio,
+            'id_tipo_vehiculo' => $dto->idTipoVehiculo,
+            'costo_servicio' => $dto->costoServicio
+        ]);
+
+        return $servicio->fresh(['tipoVehiculo']);
+    });
+}
+
+public function eliminarServicio(int $idServicio): bool
+{
+    $servicio = Servicio::findOrFail($idServicio);
+    return $servicio->delete();
+}
 }

@@ -100,6 +100,10 @@
             color: #4a5568;
             margin-bottom: 8px;
         }
+
+        .detalle-novedad p {
+            margin-bottom: 4px;
+        }
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -140,6 +144,7 @@
                     <tbody></tbody>
                 </table>
 
+                <!-- Modal Crear Novedad Interna -->
                 <div class="modal fade" id="modalNovedad" tabindex="-1" aria-labelledby="modalNovedadLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -178,6 +183,48 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
                                 <button type="button" id="btnGuardarNovedadInterna" class="btn btn-primary btn-sm" style="background-color: #2B78E4;">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Ver Detalle de Novedad Interna -->
+                <div class="modal fade" id="modalVerNovedadInterna" tabindex="-1" aria-labelledby="modalVerNovedadInternaLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalVerNovedadInternaLabel" style="font-family: 'PT Serif Bold', serif; font-size: 1.5rem;">Detalle de Novedad</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body detalle-novedad">
+                                <div id="verNovedadInternaCargando" class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </div>
+                                <div id="verNovedadInternaContenido" style="display: none;">
+                                    <h2>Ticket</h2>
+                                    <p id="verTicketInterna">-</p>
+
+                                    <h2>Tipo de Novedad</h2>
+                                    <p id="verTipoInterna">-</p>
+
+                                    <h2>Colaborador</h2>
+                                    <p id="verColaboradorInterna">-</p>
+
+                                    <h2>Fecha Reporte</h2>
+                                    <p id="verFechaInterna">-</p>
+
+                                    <h2>Etapa</h2>
+                                    <p id="verEtapaInterna">-</p>
+
+                                    <h2>Descripción</h2>
+                                    <p id="verDescripcionInterna">-</p>
+                                </div>
+                                <div id="verNovedadInternaError" class="alert alert-danger" style="display: none;"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
                             </div>
                         </div>
                     </div>
@@ -234,8 +281,7 @@
                 descripcion_novedad: document.getElementById('inputDescripcionInterna').value,
                 no_documento_colaborador: parseInt(noDocumentoColaborador),
                 etapa_novedad: "Pendiente",
-                estado_novedad: 1,
-                no_documento_colaborador: parseInt(noDocumentoColaborador)
+                estado_novedad: 1
                 // no se envía no_documento_cliente ni id_reserva: quedan null (novedad interna)
             };
 
@@ -301,12 +347,67 @@
                         <td>${novedad.no_documento_colaborador ?? '-'}</td>
                         <td>${fecha}</td>
                         <td>${novedad.etapa_novedad}</td>
-                        <td><button class="btn btn-sm btn-outline-primary">Ver</button></td>
+                        <td><button class="btn btn-sm btn-outline-primary" onclick="verNovedadInterna(${novedad.id_novedad})">Ver</button></td>
                     `;
                     tbody.appendChild(fila);
                 });
             } catch (error) {
                 console.error("Error cargando las novedades internas:", error);
+            }
+        }
+
+        // ========== VER DETALLE DE NOVEDAD INTERNA ==========
+        async function verNovedadInterna(idNovedad) {
+            const modalEl = document.getElementById('modalVerNovedadInterna');
+            const modal = new bootstrap.Modal(modalEl);
+
+            const cargando = document.getElementById('verNovedadInternaCargando');
+            const contenido = document.getElementById('verNovedadInternaContenido');
+            const errorDiv = document.getElementById('verNovedadInternaError');
+
+            cargando.style.display = 'block';
+            contenido.style.display = 'none';
+            errorDiv.style.display = 'none';
+
+            modal.show();
+
+            try {
+                const response = await fetch(`/api/novedades/${idNovedad}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const resultado = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(resultado.message || 'No se pudo obtener la novedad');
+                }
+
+                const novedad = resultado.data;
+
+                const nombreColaborador = novedad.colaborador?.usuario ?
+                    `${novedad.colaborador.usuario.nombre_usuario} ${novedad.colaborador.usuario.apellido_usuario} (CC ${novedad.no_documento_colaborador})` :
+                    (novedad.no_documento_colaborador ?? '-');
+
+                document.getElementById('verTicketInterna').textContent = novedad.ticket_novedad ?? '-';
+                document.getElementById('verTipoInterna').textContent = novedad.tipo_novedad ?? '-';
+                document.getElementById('verColaboradorInterna').textContent = nombreColaborador;
+                document.getElementById('verFechaInterna').textContent = novedad.created_at ?
+                    new Date(novedad.created_at).toLocaleDateString('es-CO') : '-';
+                document.getElementById('verEtapaInterna').textContent = novedad.etapa_novedad ?? '-';
+                document.getElementById('verDescripcionInterna').textContent = novedad.descripcion_novedad ?? 'Sin descripción';
+
+                cargando.style.display = 'none';
+                contenido.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error cargando el detalle de la novedad:', error);
+                cargando.style.display = 'none';
+                errorDiv.textContent = 'Error al cargar el detalle: ' + error.message;
+                errorDiv.style.display = 'block';
             }
         }
 

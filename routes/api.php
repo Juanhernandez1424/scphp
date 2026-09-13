@@ -10,6 +10,7 @@ use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\NovedadController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TipoVehiculoController;
+use App\Http\Controllers\PlanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,3 +56,4 @@ Route::apiResource('tipo-vehiculo', TipoVehiculoController::class);
 
 Route::get('/servicios/tipo-vehiculo/{idTipoVehiculo}', [ServicioController::class, 'getByTipoVehiculo']);
 Route::apiResource('servicios', ServicioController::class);
+Route::apiResource('planes', PlanController::class);

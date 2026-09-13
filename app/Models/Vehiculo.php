@@ -18,7 +18,7 @@ class Vehiculo extends Model
     protected $fillable = [
         'placa_vehiculo',
         'no_documento_cliente',
-        'id_tipo_vehiculo',
+        'tipo_vehiculo',
         'color_vehiculo',
         'marca_vehiculo',
         'modelo_vehiculo'

@@ -192,7 +192,13 @@ class UsuarioService
                 'colaborador'
             ]);
 
-            return $usuario;
+                       return $usuario;
         });
+    }
+
+    public function eliminarUsuario(int $idUsuario): void
+    {
+        $usuario = Usuario::findOrFail($idUsuario);
+        $usuario->update(['estado_usuario' => false]);
     }
 }
