@@ -1,4 +1,3 @@
-
 <div>
     <!-- Encabezado con estadísticas -->
     <div class="row mb-4">
@@ -683,6 +682,7 @@
                 }
                 response = await fetch(`/api/usuarios/${idUsuario}`, {
                     method: 'PUT',
+                    credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
@@ -694,7 +694,7 @@
                 if (contrasenia.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres');
                 const clientePayload = {
                     ...payload,
-                    id_rol: 1,
+                    id_rol: 3,
                     contrasenia: contrasenia,
                     tipo_rol: 'cliente',
                     no_documento_usuario: documentoLimpio,
@@ -702,6 +702,7 @@
                 };
                 response = await fetch('/api/usuarios', {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
@@ -803,7 +804,8 @@
 
     // ========== GUARDAR VEHÍCULO ==========
     async function guardarVehiculoCliente() {
-        const noDocumentoCliente = localStorage.getItem('smartclean_cliente_documento');
+        const noDocumentoCliente = document.getElementById('noDocumentoClienteVehiculo').value ||
+            localStorage.getItem('smartclean_cliente_documento');
         const placa = document.getElementById('placaVehiculoCliente').value.trim().toUpperCase();
         const idTipo = document.getElementById('tipoVehiculoCliente').value;
         const nombreTipo = document.getElementById('tipoVehiculoCliente').selectedOptions[0]?.textContent || '';
@@ -836,6 +838,7 @@
         try {
             const response = await fetch('/api/vehiculos', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -853,7 +856,8 @@
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.message || 'No se pudo registrar el vehículo');
+                const errores = result.errors ? Object.values(result.errors).flat().join('\n') : '';
+                throw new Error(errores || result.message || result.error || 'No se pudo registrar el vehículo');
             }
 
             vehiculosCliente.push({
