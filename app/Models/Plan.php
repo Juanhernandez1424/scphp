@@ -14,4 +14,6 @@ class Plan extends Model
     public $timestamps = false;
 
     protected $primaryKey = 'id_plan';
+    
+    protected $fillable = ['nombre_plan', 'descripcion_plan', 'cantidad_servicios', 'costo_plan', 'id_metodo_pago', 'estado_plan'];
 }

@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Services\ColaboradorService;
+use App\Services\UsuarioService;
 use Exception;
 use Illuminate\Http\Request;
 
 class ColaboradorController extends Controller
 {
     public function __construct(
-        protected ColaboradorService $colaboradorService
-    ) {}
+    protected ColaboradorService $colaboradorService,
+    protected UsuarioService $usuarioService
+) {}
     /**
      * Display a listing of the resource.
      *
@@ -103,9 +105,33 @@ class ColaboradorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+        public function update(Request $request, $id)
     {
-        //
+        try {
+            $colaborador = $this->colaboradorService->getById($id);
+            $dto = \App\DTOs\StoreUpdateUsuarioDTO::fromRequest($request->all());
+            $this->usuarioService->actualizarUsuario($colaborador->id_usuario, $dto);
+
+            $colaboradorActualizado = $this->colaboradorService->getById($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Colaborador actualizado correctamente',
+                'data' => $colaboradorActualizado
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Colaborador no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el colaborador',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -114,8 +140,27 @@ class ColaboradorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+        public function destroy($id)
     {
-        //
+        try {
+            $this->colaboradorService->eliminar($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Colaborador eliminado correctamente'
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Colaborador no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo eliminar el colaborador (puede tener reservas asociadas)',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

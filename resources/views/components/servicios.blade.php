@@ -1,4 +1,4 @@
-<div>
+    <div>
     <!-- Encabezado con estadísticas -->
     <div class="row mb-4">
         <div class="col-md-6">
@@ -71,6 +71,12 @@
                         <input type="text" class="form-control" id="nombreTipoVehiculo"
                             placeholder="Ej: Automovil, Camioneta, Moto">
                     </div>
+                    <!-- Campo agregado: faltaba en el modal y guardarTipoVehiculo() lo necesitaba -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Descripción (opcional)</label>
+                        <textarea class="form-control" id="descripcionTipoVehiculo" rows="2"
+                            placeholder="Descripción del tipo de vehículo"></textarea>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -83,16 +89,18 @@
     </div>
 </div>
 
-<!-- Modal Agregar Servicio a Tipo de Vehículo -->
+<!-- Modal Agregar/Editar Servicio a Tipo de Vehículo (reutilizado para ambos casos) -->
 <div class="modal fade" id="agregarServicioModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Agregar Servicio</h5>
+                <h5 class="modal-title" id="tituloModalServicio"><i class="bi bi-plus-circle me-2"></i>Agregar Servicio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="tipoVehiculoIdServicio">
+                <!-- Campo agregado: guarda el id del servicio cuando se está editando; vacío = modo "crear" -->
+                <input type="hidden" id="servicioIdEditar" value="">
                 <div class="mb-3">
                     <label class="form-label fw-bold">Nombre del Servicio</label>
                     <input type="text" class="form-control" id="nombreServicio" placeholder="Ej: Lavado Sencillo">
@@ -109,7 +117,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="guardarServicio()">
+                <button type="button" class="btn btn-primary" id="btnGuardarServicio" onclick="guardarServicio()">
                     <i class="bi bi-check-circle me-1"></i>Agregar Servicio
                 </button>
             </div>
@@ -174,7 +182,6 @@
 
         let html = '';
         tipos.forEach(tipo => {
-            // 👇 Cambiar de 'servicio' a 'servicios' si cambiaste la relación
             const servicios = tipo.servicio || [];
             const totalServicios = servicios.length;
 
@@ -203,7 +210,6 @@
                                         <h6 class="mb-1"><strong>${servicio.nombre_servicio || 'Sin nombre'}</strong></h6>
                                         <p class="small text-muted mb-1">${servicio.descripcion_servicio || 'Sin descripción'}</p>
                                         <span class="badge bg-success">$ ${Number(servicio.costo_servicio || 0).toLocaleString()}</span>
-                                        <!-- 👆 Cambiado de precio_servicio a costo_servicio -->
                                     </div>
                                     <div>
                                         <button class="btn btn-sm btn-outline-primary" onclick="editarServicio(${servicio.id_servicio})">
@@ -249,20 +255,63 @@
         }
     }
 
-    // ========== ABRIR MODAL AGREGAR SERVICIO ==========
+    // ========== ABRIR MODAL AGREGAR SERVICIO (modo crear) ==========
     function abrirModalAgregarServicio(idTipoVehiculo) {
         document.getElementById('tipoVehiculoIdServicio').value = idTipoVehiculo;
+        document.getElementById('servicioIdEditar').value = '';
         document.getElementById('nombreServicio').value = '';
         document.getElementById('precioServicio').value = '';
         document.getElementById('descripcionServicio').value = '';
+
+        document.getElementById('tituloModalServicio').innerHTML =
+            '<i class="bi bi-plus-circle me-2"></i>Agregar Servicio';
+        document.getElementById('btnGuardarServicio').innerHTML =
+            '<i class="bi bi-check-circle me-1"></i>Agregar Servicio';
 
         const modal = new bootstrap.Modal(document.getElementById('agregarServicioModal'));
         modal.show();
     }
 
-    // ========== GUARDAR SERVICIO ==========
+    // ========== ABRIR MODAL EDITAR SERVICIO (modo editar, mismo modal) ==========
+    function editarServicio(idServicio) {
+        // Busca el servicio dentro de los tipos de vehículo ya cargados
+        let servicioEncontrado = null;
+        let idTipoVehiculo = null;
+
+        for (const tipo of tiposVehiculoData) {
+            const servicios = tipo.servicio || [];
+            const encontrado = servicios.find(s => s.id_servicio === idServicio);
+            if (encontrado) {
+                servicioEncontrado = encontrado;
+                idTipoVehiculo = tipo.id_tipo_vehiculo;
+                break;
+            }
+        }
+
+        if (!servicioEncontrado) {
+            alert('No se encontró el servicio a editar');
+            return;
+        }
+
+        document.getElementById('tipoVehiculoIdServicio').value = idTipoVehiculo;
+        document.getElementById('servicioIdEditar').value = servicioEncontrado.id_servicio;
+        document.getElementById('nombreServicio').value = servicioEncontrado.nombre_servicio || '';
+        document.getElementById('precioServicio').value = servicioEncontrado.costo_servicio || '';
+        document.getElementById('descripcionServicio').value = servicioEncontrado.descripcion_servicio || '';
+
+        document.getElementById('tituloModalServicio').innerHTML =
+            '<i class="bi bi-pencil me-2"></i>Editar Servicio';
+        document.getElementById('btnGuardarServicio').innerHTML =
+            '<i class="bi bi-check-circle me-1"></i>Guardar Cambios';
+
+        const modal = new bootstrap.Modal(document.getElementById('agregarServicioModal'));
+        modal.show();
+    }
+
+    // ========== GUARDAR SERVICIO (crea o edita según servicioIdEditar) ==========
     async function guardarServicio() {
         const idTipoVehiculo = document.getElementById('tipoVehiculoIdServicio').value;
+        const idServicioEditar = document.getElementById('servicioIdEditar').value;
         const nombre = document.getElementById('nombreServicio').value.trim();
         const precio = document.getElementById('precioServicio').value.trim();
         const descripcion = document.getElementById('descripcionServicio').value.trim();
@@ -279,9 +328,13 @@
             costo_servicio: parseFloat(precio)
         };
 
+        const esEdicion = !!idServicioEditar;
+        const url = esEdicion ? `/api/servicios/${idServicioEditar}` : '/api/servicios';
+        const metodo = esEdicion ? 'PUT' : 'POST';
+
         try {
-            const response = await fetch('/api/servicios', {
-                method: 'POST',
+            const response = await fetch(url, {
+                method: metodo,
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -292,14 +345,15 @@
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.message || 'No se pudo crear el servicio');
+                throw new Error(result.message || (esEdicion ? 'No se pudo actualizar el servicio' : 'No se pudo crear el servicio'));
             }
 
-            alert('Servicio agregado correctamente');
+            alert(esEdicion ? 'Servicio actualizado correctamente' : 'Servicio agregado correctamente');
 
             const modal = bootstrap.Modal.getInstance(document.getElementById('agregarServicioModal'));
             if (modal) modal.hide();
 
+            document.getElementById('servicioIdEditar').value = '';
             cargarTiposVehiculo();
 
         } catch (error) {
@@ -383,18 +437,14 @@
         }
     }
 
-    // ========== EDITAR SERVICIO (placeholder) ==========
-    function editarServicio(idServicio) {
-        alert(`Editar servicio con ID: ${idServicio}`);
-    }
-
     // ========== ESTADÍSTICAS ==========
     function actualizarEstadisticas() {
         const totalTipos = tiposVehiculoData.length;
         let totalServicios = 0;
 
         tiposVehiculoData.forEach(tipo => {
-            totalServicios += (tipo.servicios || []).length;
+            // Corregido: la relación se llama 'servicio' (sin "s"), no 'servicios'
+            totalServicios += (tipo.servicio || []).length;
         });
 
         document.getElementById('totalTiposVehiculo').textContent = totalTipos;

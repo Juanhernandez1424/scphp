@@ -1,3 +1,4 @@
+
 <div>
     <!-- Encabezado con estadísticas -->
     <div class="row mb-4">
@@ -165,6 +166,10 @@
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" id="btnGestionarVehiculos"
+                    style="display: none;" onclick="abrirGestionVehiculosEdicion()">
+                    <i class="bi bi-car-front me-1"></i>Gestionar Vehículos
+                </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" id="btnGuardarCliente" onclick="guardarCliente()">
                     <i class="bi bi-check-circle me-1"></i>Registrar Cliente
@@ -174,16 +179,16 @@
     </div>
 </div>
 
-<!-- Modal para registrar vehículos del cliente (Paso 2) -->
+<!-- Modal para registrar vehículos del cliente (Paso 2 / Edición) -->
 <div class="modal fade" id="agregarVehiculoClienteModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title"><i class="bi bi-check-circle me-2"></i>¡Cliente Registrado!</h5>
+                <h5 class="modal-title" id="vehiculoModalTitle"><i class="bi bi-check-circle me-2"></i>¡Cliente Registrado!</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-success">
+                <div class="alert alert-success" id="vehiculoModalAlertExito">
                     <i class="bi bi-check-circle-fill me-2"></i>
                     El cliente se registró correctamente. Ahora puedes agregar sus vehículos.
                 </div>
@@ -203,8 +208,7 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Tipo</label>
                                 <select class="form-select" id="tipoVehiculoCliente">
-                                    <option value="carro">Carro</option>
-                                    <option value="moto">Moto</option>
+                                    <option value="">Cargando...</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -252,6 +256,41 @@
     let clientesData = [];
     let clientesFiltrados = [];
     let modoEdicion = false;
+    let vehiculosCliente = [];
+    let tiposVehiculoData = [];
+
+    // ========== CARGAR TIPOS DE VEHÍCULO (dinámico desde la BD) ==========
+    async function cargarTiposVehiculo() {
+        try {
+            const response = await fetch('/api/tipo-vehiculo', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || 'Error al cargar tipos de vehículo');
+
+            tiposVehiculoData = result.data || [];
+
+            const select = document.getElementById('tipoVehiculoCliente');
+            select.innerHTML = tiposVehiculoData
+                .map(t => `<option value="${t.id_tipo_vehiculo}">${t.nombre_tipo_vehiculo}</option>`)
+                .join('');
+
+        } catch (error) {
+            console.error('Error al cargar tipos de vehículo:', error);
+            document.getElementById('tipoVehiculoCliente').innerHTML =
+                '<option value="">Error cargando tipos</option>';
+        }
+    }
+
+    // Traduce un id_tipo_vehiculo al nombre real usando los tipos ya cargados
+    function nombreTipoPorId(idTipoVehiculo) {
+        const tipo = tiposVehiculoData.find(t => t.id_tipo_vehiculo === idTipoVehiculo);
+        return tipo ? tipo.nombre_tipo_vehiculo : 'Sin tipo';
+    }
 
     // ========== ABRIR MODAL PARA CREAR ==========
     function abrirModalCrearCliente() {
@@ -262,6 +301,7 @@
         document.getElementById('contraseniaHelp').textContent = 'La contraseña es obligatoria para nuevos clientes';
         document.getElementById('contraseniaCliente').required = true;
         document.getElementById('mensajeInfo').style.display = 'block';
+        document.getElementById('btnGestionarVehiculos').style.display = 'none';
 
         document.getElementById('formCliente').reset();
         document.getElementById('editIdUsuario').value = '';
@@ -466,7 +506,7 @@
                                 ${vehiculo.length > 0 ? `
                                     <div>Vehículos:</div>
                                     <ul class="mb-0 ps-3">
-                                        ${vehiculo.map(v => `<li>${v.placa_vehiculo || 'Sin placa'} (${v.tipo_vehiculo || 'Sin tipo'})</li>`).join('')}
+                                        ${vehiculo.map(v => `<li>${v.placa_vehiculo || 'Sin placa'} (${nombreTipoPorId(v.id_tipo_vehiculo)})</li>`).join('')}
                                     </ul>
                                 ` : `
                                     <div class="text-muted"><i class="bi bi-car-front me-1"></i>Sin vehículos registrados</div>
@@ -556,9 +596,6 @@
         }
     }
 
-    // ========== VEHÍCULOS ==========
-    let vehiculosCliente = [];
-
     // ========== EDITAR CLIENTE ==========
     function editarCliente(documento) {
         const cliente = clientesData.find(c => c.no_documento_cliente == documento);
@@ -576,6 +613,7 @@
         document.getElementById('contraseniaHelp').textContent = 'Dejar en blanco para mantener la actual';
         document.getElementById('contraseniaCliente').required = false;
         document.getElementById('mensajeInfo').style.display = 'none';
+        document.getElementById('btnGestionarVehiculos').style.display = 'inline-block';
 
         document.getElementById('editIdUsuario').value = usuario.id_usuario || '';
         document.getElementById('editNoDocumento').value = documento;
@@ -656,7 +694,7 @@
                 if (contrasenia.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres');
                 const clientePayload = {
                     ...payload,
-                    id_rol: 3,
+                    id_rol: 1,
                     contrasenia: contrasenia,
                     tipo_rol: 'cliente',
                     no_documento_usuario: documentoLimpio,
@@ -691,13 +729,22 @@
                 document.getElementById('noDocumentoClienteVehiculo').value = documentoLimpio;
                 vehiculosCliente = [];
                 actualizarListaVehiculosCliente();
+
+                // Modal en modo "cliente recién creado"
+                document.querySelector('#agregarVehiculoClienteModal .modal-header').classList.remove('bg-primary');
+                document.querySelector('#agregarVehiculoClienteModal .modal-header').classList.add('bg-success');
+                document.getElementById('vehiculoModalTitle').innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Cliente Registrado!';
+                document.getElementById('vehiculoModalAlertExito').style.display = 'block';
+
                 const vehiculoModal = new bootstrap.Modal(document.getElementById('agregarVehiculoClienteModal'));
                 vehiculoModal.show();
                 document.getElementById('placaVehiculoCliente').value = '';
                 document.getElementById('marcaVehiculoCliente').value = '';
                 document.getElementById('modeloVehiculoCliente').value = '';
                 document.getElementById('colorVehiculoCliente').value = '';
-                document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
+                if (document.getElementById('tipoVehiculoCliente').options.length > 0) {
+                    document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
+                }
             }
 
             cargarClientes();
@@ -707,11 +754,59 @@
         }
     }
 
+    // ========== ABRIR GESTIÓN DE VEHÍCULOS DESDE EDICIÓN ==========
+    function abrirGestionVehiculosEdicion() {
+        const documento = document.getElementById('editNoDocumento').value;
+        if (!documento) {
+            alert('No se encontró el documento del cliente');
+            return;
+        }
+
+        localStorage.setItem('smartclean_cliente_documento', documento);
+        document.getElementById('noDocumentoClienteVehiculo').value = documento;
+
+        // Cargar vehículos que el cliente ya tiene (desde clientesData)
+        const cliente = clientesData.find(c => c.no_documento_cliente == documento);
+        const vehiculosExistentes = (cliente && cliente.vehiculo) ? cliente.vehiculo : [];
+
+        vehiculosCliente = vehiculosExistentes.map(v => ({
+            placa: v.placa_vehiculo,
+            tipo: nombreTipoPorId(v.id_tipo_vehiculo),
+            marca: v.marca_vehiculo || '',
+            modelo: v.modelo_vehiculo || '',
+            color: v.color_vehiculo || '',
+            yaGuardado: true // ya existe en la BD, no se debe reenviar ni permitir borrarlo desde aquí
+        }));
+        actualizarListaVehiculosCliente();
+
+        // Ajustar encabezado del modal para el contexto de edición
+        document.querySelector('#agregarVehiculoClienteModal .modal-header').classList.remove('bg-success');
+        document.querySelector('#agregarVehiculoClienteModal .modal-header').classList.add('bg-primary');
+        document.getElementById('vehiculoModalTitle').innerHTML =
+            '<i class="bi bi-car-front me-2"></i>Vehículos del Cliente';
+        document.getElementById('vehiculoModalAlertExito').style.display = 'none';
+
+        document.getElementById('placaVehiculoCliente').value = '';
+        document.getElementById('marcaVehiculoCliente').value = '';
+        document.getElementById('modeloVehiculoCliente').value = '';
+        document.getElementById('colorVehiculoCliente').value = '';
+        if (document.getElementById('tipoVehiculoCliente').options.length > 0) {
+            document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
+        }
+
+        const clienteModal = bootstrap.Modal.getInstance(document.getElementById('clienteModal'));
+        if (clienteModal) clienteModal.hide();
+
+        const vehiculoModal = new bootstrap.Modal(document.getElementById('agregarVehiculoClienteModal'));
+        vehiculoModal.show();
+    }
+
     // ========== GUARDAR VEHÍCULO ==========
     async function guardarVehiculoCliente() {
         const noDocumentoCliente = localStorage.getItem('smartclean_cliente_documento');
         const placa = document.getElementById('placaVehiculoCliente').value.trim().toUpperCase();
-        const tipo = document.getElementById('tipoVehiculoCliente').value;
+        const idTipo = document.getElementById('tipoVehiculoCliente').value;
+        const nombreTipo = document.getElementById('tipoVehiculoCliente').selectedOptions[0]?.textContent || '';
         const marca = document.getElementById('marcaVehiculoCliente').value.trim();
         const modelo = document.getElementById('modeloVehiculoCliente').value.trim();
         const color = document.getElementById('colorVehiculoCliente').value.trim();
@@ -719,6 +814,11 @@
         if (!placa) {
             alert('Por favor ingresa la placa del vehículo');
             document.getElementById('placaVehiculoCliente').focus();
+            return;
+        }
+
+        if (!idTipo) {
+            alert('Por favor selecciona el tipo de vehículo');
             return;
         }
 
@@ -743,7 +843,7 @@
                 body: JSON.stringify({
                     placa_vehiculo: placa,
                     no_documento_cliente: noDocumentoCliente,
-                    id_tipo_vehiculo: tipo === 'carro' ? 1 : 2,
+                    id_tipo_vehiculo: parseInt(idTipo),
                     color_vehiculo: color,
                     marca_vehiculo: marca,
                     modelo_vehiculo: modelo
@@ -758,10 +858,11 @@
 
             vehiculosCliente.push({
                 placa,
-                tipo,
+                tipo: nombreTipo,
                 marca,
                 modelo,
-                color
+                color,
+                yaGuardado: true
             });
             actualizarListaVehiculosCliente();
 
@@ -769,7 +870,9 @@
             document.getElementById('marcaVehiculoCliente').value = '';
             document.getElementById('modeloVehiculoCliente').value = '';
             document.getElementById('colorVehiculoCliente').value = '';
-            document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
+            if (document.getElementById('tipoVehiculoCliente').options.length > 0) {
+                document.getElementById('tipoVehiculoCliente').selectedIndex = 0;
+            }
 
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-success alert-dismissible fade show mt-2';
@@ -780,6 +883,8 @@
             `;
             document.querySelector('#agregarVehiculoClienteModal .modal-body').prepend(alertDiv);
             setTimeout(() => alertDiv.remove(), 3000);
+
+            cargarClientes();
 
         } catch (error) {
             console.error('Error:', error);
@@ -814,9 +919,10 @@
                         <span class="badge bg-secondary ms-2">${vehiculo.tipo}</span>
                         ${detalles.length > 0 ? `<small class="text-muted d-block">${detalles.join(' · ')}</small>` : ''}
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarVehiculoCliente(${index})">
-                        <i class="bi bi-x-circle"></i>
-                    </button>
+                    ${!vehiculo.yaGuardado ? `
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarVehiculoCliente(${index})">
+                            <i class="bi bi-x-circle"></i>
+                        </button>` : `<span class="badge bg-success">Guardado</span>`}
                 </div>
             `;
         });
@@ -870,8 +976,10 @@
         }
     });
 
-    // Inicializar
-    document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar (se cargan primero los tipos de vehículo para que la lista de clientes
+    // pueda traducir cada id_tipo_vehiculo a su nombre real desde el primer render)
+    document.addEventListener('DOMContentLoaded', async function() {
+        await cargarTiposVehiculo();
         cargarClientes();
     });
 </script>

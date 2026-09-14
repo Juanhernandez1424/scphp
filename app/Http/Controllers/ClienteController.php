@@ -182,8 +182,40 @@ class ClienteController extends Controller
      */
     public function update(Request $request, $id)
     {
+        try {
+            if ($request->hasAny(['nombre_usuario', 'apellido_usuario', 'numero_celular', 'correo_electronico', 'tipo_documento'])) {
+                $cliente = $this->clienteService->getById($id);
+                $dto = \App\DTOs\StoreUpdateUsuarioDTO::fromRequest($request->all());
+                $this->usuarioService->actualizarUsuario($cliente->id_usuario, $dto);
+            }
+
+            if ($request->has('id_plan')) {
+                $this->clienteService->actualizarPlan($id, $request->input('id_plan'));
+            }
+
+            $clienteActualizado = $this->clienteService->getById($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cliente actualizado correctamente',
+                'data' => $clienteActualizado
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cliente no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el cliente',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }    
         //
-    }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -191,8 +223,27 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+        public function destroy($id)
     {
-        //
+        try {
+            $this->clienteService->eliminar($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cliente eliminado correctamente'
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cliente no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo eliminar el cliente (puede tener reservas o vehículos asociados)',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

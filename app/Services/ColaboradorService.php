@@ -21,4 +21,9 @@ class ColaboradorService
             'usuario'
         ])->findOrFail($noDocumentoColaborador);
     }
+           public function eliminar(string $noDocumentoColaborador): void
+    {
+        $colaborador = Colaborador::findOrFail($noDocumentoColaborador);
+        $colaborador->usuario->update(['estado_usuario' => false]);
+    }
 }

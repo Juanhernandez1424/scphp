@@ -15,8 +15,8 @@ class Cliente extends Model
 
     protected $primaryKey = 'no_documento_cliente';
 
-    protected $fillable = ['no_documento_cliente', 'id_usuario'];
-
+    protected $fillable = ['no_documento_cliente', 'id_usuario', 'id_plan'];
+    
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');

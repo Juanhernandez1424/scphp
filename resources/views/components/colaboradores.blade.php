@@ -123,6 +123,56 @@
     </div>
 </div>
 
+<!-- Modal Editar Empleado -->
+<div class="modal fade" id="editarEmpleadoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Editar Empleado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarColaborador">
+                    <input type="hidden" id="editDocumentoOriginal">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tipo de Documento</label>
+                        <select class="form-select" id="editTipoDocumentoColaborador">
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="NIT">NIT</option>
+                            <option value="PAS">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nombre</label>
+                            <input type="text" class="form-control" id="editNombreColaborador">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Apellidos</label>
+                            <input type="text" class="form-control" id="editApellidosColaborador">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Teléfono</label>
+                        <input type="tel" class="form-control" id="editTelefonoColaborador">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email</label>
+                        <input type="email" class="form-control" id="editEmailColaborador">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="actualizarColaborador()">
+                    <i class="bi bi-check-circle me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let colaboradoresData = [];
     let colaboradoresFiltrados = [];
@@ -283,7 +333,7 @@
             no_documento_usuario: documento,
             numero_celular: telefono,
             correo_electronico: email,
-            id_rol: 4,
+            id_rol: 2,
             contrasenia: 'empleado123',
             tipo_rol: 'colaborador',
             estado_usuario: true,
@@ -322,7 +372,63 @@
 
     // ========== EDITAR COLABORADOR ==========
     function editarColaborador(documento) {
-        alert(`Editar empleado con documento: ${documento}`);
+        const colaborador = colaboradoresData.find(c => String(c.no_documento_colaborador) === String(documento));
+        if (!colaborador) {
+            alert('No se encontró el empleado');
+            return;
+        }
+        const usuario = colaborador.usuario || {};
+
+        document.getElementById('editDocumentoOriginal').value = documento;
+        document.getElementById('editTipoDocumentoColaborador').value = usuario.tipo_documento || 'CC';
+        document.getElementById('editNombreColaborador').value = usuario.nombre_usuario || '';
+        document.getElementById('editApellidosColaborador').value = usuario.apellido_usuario || '';
+        document.getElementById('editTelefonoColaborador').value = usuario.numero_celular || '';
+        document.getElementById('editEmailColaborador').value = usuario.correo_electronico || '';
+
+        const modal = new bootstrap.Modal(document.getElementById('editarEmpleadoModal'));
+        modal.show();
+    }
+
+    // ========== ACTUALIZAR COLABORADOR ==========
+    async function actualizarColaborador() {
+        const documento = document.getElementById('editDocumentoOriginal').value;
+
+        const payload = {
+            tipo_documento: document.getElementById('editTipoDocumentoColaborador').value,
+            nombre_usuario: document.getElementById('editNombreColaborador').value.trim(),
+            apellido_usuario: document.getElementById('editApellidosColaborador').value.trim(),
+            numero_celular: document.getElementById('editTelefonoColaborador').value.trim(),
+            correo_electronico: document.getElementById('editEmailColaborador').value.trim()
+        };
+
+        try {
+            const response = await fetch(`/api/colaboradores/${documento}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'No se pudo actualizar el empleado');
+            }
+
+            alert('Empleado actualizado correctamente');
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editarEmpleadoModal'));
+            if (modal) modal.hide();
+
+            cargarColaboradores();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al actualizar: ' + error.message);
+        }
     }
 
     // ========== ELIMINAR COLABORADOR ==========
