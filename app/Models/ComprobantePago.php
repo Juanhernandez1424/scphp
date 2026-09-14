@@ -19,11 +19,15 @@ class ComprobantePago extends Model
         'id_comprobante_pago',
         'id_reserva',
         'id_metodo_pago',
-        'reserva'
     ];
 
     public function reserva()
     {
         return $this->belongsTo(Reserva::class, 'id_reserva', 'id_reserva');
+    }
+
+    public function metodoPago()
+    {
+        return $this->belongsTo(MetodoPago::class, 'id_metodo_pago', 'id_metodo_pago');
     }
 }

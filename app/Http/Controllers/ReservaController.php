@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReservaController extends Controller
 {
@@ -23,7 +24,7 @@ class ReservaController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $reservas = $this->reservaService->getAll();
+            $reservas = $this->reservaService->getAll($this->colaboradorAutenticadoId());
             return response()->json([
                 'success' => true,
                 'message' => 'Lista de reservas obtenida correctamente',
@@ -47,6 +48,7 @@ class ReservaController extends Controller
     public function store(StoreReservaRequest $request): JsonResponse
     {
         try {
+            $this->rechazarColaborador();
             $dto = StoreReservaDTO::fromRequest($request->validated());
 
             $reserva = $this->reservaService->registrarReserva($dto);
@@ -101,7 +103,10 @@ class ReservaController extends Controller
     public function show($id)
     {
         try {
-            $reserva = $this->reservaService->getById((int)$id);
+            $reserva = $this->reservaService->getById(
+                (int) $id,
+                $this->colaboradorAutenticadoId()
+            );
             return response()->json([
                 'success' => true,
                 'message' => 'Reserva obtenida correctamente',
@@ -125,7 +130,7 @@ class ReservaController extends Controller
     public function getByDate($fecha): JsonResponse
     {
         try {
-            $reservas = $this->reservaService->getByDate($fecha);
+            $reservas = $this->reservaService->getByDate($fecha, $this->colaboradorAutenticadoId());
             return response()->json([
                 'success' => true,
                 'message' => 'Reservas obtenidas correctamente',
@@ -161,6 +166,7 @@ class ReservaController extends Controller
     public function activarReserva($idReserva): JsonResponse
     {
         try {
+            $this->rechazarColaborador();
             $reserva = $this->reservaService->activarReserva((int)$idReserva);
             return response()->json([
                 'success' => true,
@@ -185,7 +191,10 @@ class ReservaController extends Controller
     public function iniciarReserva($idReserva): JsonResponse
     {
         try {
-            $reserva = $this->reservaService->iniciarReserva((int)$idReserva);
+            $reserva = $this->reservaService->iniciarReserva(
+                (int) $idReserva,
+                $this->colaboradorAutenticadoId()
+            );
             return response()->json([
                 'success' => true,
                 'message' => 'Reserva iniciada correctamente',
@@ -209,7 +218,10 @@ class ReservaController extends Controller
     public function finalizarReserva($idReserva): JsonResponse
     {
         try {
-            $reserva = $this->reservaService->finalizarReserva((int)$idReserva);
+            $reserva = $this->reservaService->finalizarReserva(
+                (int) $idReserva,
+                $this->colaboradorAutenticadoId()
+            );
             return response()->json([
                 'success' => true,
                 'message' => 'Reserva finalizada correctamente',
@@ -233,6 +245,7 @@ class ReservaController extends Controller
     public function cancelarReserva($idReserva): JsonResponse
     {
         try {
+            $this->rechazarColaborador();
             $reserva = $this->reservaService->cancelarReserva((int)$idReserva);
             return response()->json([
                 'success' => true,
@@ -264,6 +277,7 @@ class ReservaController extends Controller
     public function update(Request $request, $id): JsonResponse
     {
         try {
+            $this->rechazarColaborador();
 
             $reserva = $this->reservaService->actualizarEtapaLavado((int)$id, $request->etapa_lavado);
 
@@ -284,6 +298,28 @@ class ReservaController extends Controller
                 'message' => 'Error al actualizar la reserva',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    private function colaboradorAutenticadoId(): ?int
+    {
+        if ((int) Auth::user()?->id_rol !== 4) {
+            return null;
+        }
+
+        $colaboradorId = Auth::user()->colaborador?->no_documento_colaborador;
+
+        if ($colaboradorId === null) {
+            abort(403, 'El usuario no tiene un colaborador asociado.');
+        }
+
+        return (int) $colaboradorId;
+    }
+
+    private function rechazarColaborador(): void
+    {
+        if ((int) Auth::user()?->id_rol === 4) {
+            abort(403, 'El colaborador solo puede iniciar y finalizar reservas.');
         }
     }
 }

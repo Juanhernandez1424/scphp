@@ -48,7 +48,7 @@
 
         <!-- Menú de Enlaces usando variables de Laravel -->
         <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
-            @if(auth()->user()->id_rol != 3)
+            @if(!in_array(auth()->user()->id_rol, [3, 4], true))
             <li class="nav-item w-100">
                 <!-- Reemplazamos la lógica vieja de PHP por directivas de Blade -->
                 <a href="{{ route('dashboard') }}"
@@ -67,6 +67,7 @@
                     <span class="nav-text-custom">Reservas</span>
                 </a>
             </li>
+            @if(auth()->user()->id_rol != 4)
             <li class="w-100">
                 <a href="{{ route('novedades-cliente') }}"
                     class="nav-link px-3 align-middle text-white d-flex align-items-center {{ request()->routeIs('novedades-cliente') ? 'active' : '' }}"
@@ -75,7 +76,8 @@
                     <span class="nav-text-custom">Novedades</span>
                 </a>
             </li>
-            @if(auth()->user()->id_rol != 3)
+            @endif
+            @if(!in_array(auth()->user()->id_rol, [3, 4], true))
             <li class="w-100">
                 <a href="{{ route('gerencia.clientes') }}"
                     class="nav-link px-3 align-middle text-white d-flex align-items-center {{ request()->routeIs('gerencia.clientes') ? 'active' : '' }}"

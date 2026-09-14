@@ -3,39 +3,63 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novedades</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400&display=swap" rel="stylesheet">
     <style>
+        .module-content {
+            padding: 2rem 2.25rem !important;
+        }
+
+        .module-title {
+            font-family: 'PT Serif', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .module-content {
+                padding: 1.25rem 1rem !important;
+            }
+        }
+
         body {
-            /* margin: 0;
-            padding: 50px; /
-            font-family: sans-serif;
-            background-color: #ffffff; */
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
         }
 
         .titulo-principal {
-            margin: 0 0 30px 0;
-            font-family: 'PT Serif Bold', serif;
-            font-size: 2.5rem;
+            margin: 0 0 1.5rem;
+            font-family: 'PT Serif', serif;
+            font-size: 2rem;
+            font-weight: 400;
             color: #333333;
         }
 
         .grupo-botones {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
         }
 
         .btn-interna,
         .btn-cliente {
             background-color: #e2e8f0;
             color: #4a5568;
-            padding: 12px 30px;
-            font-size: 1.1rem;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.9rem;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-family: 'PT Serif Bold', serif;
+            font-family: Arial, sans-serif;
         }
 
         .btn-interna {
@@ -52,17 +76,18 @@
         }
 
         .subtitulo_seccion {
-            font-family: 'PT Serif Bold', serif;
+            font-family: 'PT Serif', serif;
             color: #333333;
-            font-size: 1.8rem;
+            font-size: 1.25rem;
+            font-weight: 400;
             margin: 0;
         }
 
         .btn-agregar-novedad {
             background-color: #2B78E4;
             color: white;
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -116,9 +141,9 @@
         <div class="row flex-nowrap">
             <x-sidebar />
 
-            <main class="col py-3">
+            <main class="col module-content">
 
-                <h1 class="titulo-principal">Novedades</h1>
+                <h1 class="titulo-principal module-title">Novedades</h1>
 
                 <div class="grupo-botones">
                     <a href="{{ url('/novedades-interno') }}" class="btn-interna">Interna</a>
@@ -149,7 +174,7 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="modalNovedadLabel" style="font-family: 'PT Serif Bold', serif; font-size: 1.5rem;">Crear Novedades</h5>
+                                <h5 class="modal-title" id="modalNovedadLabel">Crear Novedad</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -193,7 +218,7 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="modalVerNovedadInternaLabel" style="font-family: 'PT Serif Bold', serif; font-size: 1.5rem;">Detalle de Novedad</h5>
+                                <h5 class="modal-title" id="modalVerNovedadInternaLabel">Detalle de Novedad</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body detalle-novedad">

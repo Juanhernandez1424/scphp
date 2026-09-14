@@ -59,4 +59,9 @@ class Reserva extends Model
     {
         return $this->belongsTo(TipoVehiculo::class, 'id_tipo_vehiculo', 'id_tipo_vehiculo');
     }
+
+    public function comprobantePago()
+    {
+        return $this->hasOne(ComprobantePago::class, 'id_reserva', 'id_reserva');
+    }
 }

@@ -4,10 +4,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Reservas - SmartClean</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'PT Serif', serif;
+            font-weight: 400;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .module-content {
+            padding: 2rem 2.25rem !important;
+        }
+
+        .module-title {
+            font-family: 'PT Serif', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 768px) {
+            .module-content {
+                padding: 1.25rem 1rem !important;
+            }
+        }
+
         .stat-card {
             background: white;
             border-radius: 16px;
@@ -487,13 +527,13 @@
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <x-sidebar />
-            <main class="col py-3" style="background: #f8f9fa; min-height: 100vh;">
+            <main class="col module-content" style="background: #f8f9fa; min-height: 100vh;">
                 <div class="container-fluid px-4">
 
                     <!-- ========== TÍTULO ========== -->
-                    <div class="mb-3">
-                        <h1 class="page-title mb-0">Lavados y Reservas</h1>
-                        <p class="page-subtitle">Panel completo de lavados, reservas y pagos</p>
+                    <div class="mb-4">
+                        <h1 class="module-title mb-1">Lavados y reservas</h1>
+                        <p class="text-muted">Configura empleados, servicios, precios y clientes del lavadero</p>
                     </div>
 
                     <!-- ========== STATS ========== -->
@@ -561,7 +601,7 @@
                         <!-- ====== COLUMNA IZQUIERDA: BUSCADOR + FORMULARIO ====== -->
                         <div class="col-lg-6">
 
-                            @if(auth()->user()->id_rol != 3)
+                            @if(!in_array((int) auth()->user()->id_rol, [3, 4], true))
                             <!-- Buscador de Cliente -->
                             <div class="card-custom mb-4">
                                 <div class="card-title">Buscar Cliente</div>
@@ -585,6 +625,7 @@
                             </div>
                             @endif
 
+                            @if((int) auth()->user()->id_rol != 4)
                             <!-- Formulario de Reserva -->
                             <div class="card-custom" id="formularioReserva" style="display: none;">
                                 <div class="card-title">Crear Reserva</div>
@@ -657,6 +698,7 @@
                                     </button>
                                 </form>
                             </div>
+                            @endif
                         </div>
 
                         <!-- ====== COLUMNA DERECHA: RESERVAS Y LAVADOS ====== -->
@@ -713,18 +755,7 @@
 
                     <div class="mb-2 fw-semibold">Método de pago</div>
                     <div class="d-grid gap-2" id="metodosPago">
-                        <label class="payment-option d-flex align-items-center gap-2">
-                            <input class="form-check-input mt-0" type="radio" name="metodoPago" value="Efectivo" checked>
-                            <span><i class="bi bi-cash-coin me-2"></i>Efectivo</span>
-                        </label>
-                        <label class="payment-option d-flex align-items-center gap-2">
-                            <input class="form-check-input mt-0" type="radio" name="metodoPago" value="Nequi">
-                            <span><i class="bi bi-phone me-2"></i>Nequi</span>
-                        </label>
-                        <label class="payment-option d-flex align-items-center gap-2">
-                            <input class="form-check-input mt-0" type="radio" name="metodoPago" value="Daviplata">
-                            <span><i class="bi bi-wallet2 me-2"></i>Daviplata</span>
-                        </label>
+                        <div class="text-muted small">Cargando métodos de pago...</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -764,6 +795,55 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar recibo</button>
+                    <button type="button" class="btn btn-primary" onclick="descargarRecibo()">
+                        <i class="bi bi-download me-1"></i>Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEditarReserva" tabindex="-1" aria-labelledby="modalEditarReservaLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditarReservaLabel">Editar reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editarReservaId">
+                    <div class="mb-3">
+                        <label class="label-form">Vehículo</label>
+                        <select id="editarPlacaVehiculo" class="form-select form-select-custom"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="label-form">Colaborador</label>
+                        <select id="editarColaborador" class="form-select form-select-custom"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="label-form">Tipo de vehículo</label>
+                        <select id="editarTipoVehiculo" class="form-select form-select-custom"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="label-form">Servicio</label>
+                        <select id="editarServicio" class="form-select form-select-custom"></select>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="label-form">Fecha</label>
+                            <input type="date" id="editarFecha" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="label-form">Hora</label>
+                            <select id="editarHora" class="form-select"></select>
+                        </div>
+                    </div>
+                    <div id="editarReservaEstado" class="alert mt-3 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarEdicionReserva()">Guardar cambios</button>
                 </div>
             </div>
         </div>
@@ -777,7 +857,10 @@
         let serviciosData = [];
         let vehiculosCliente = [];
         let reservaPendienteDePago = null;
-        const esClienteAutenticado = @json(auth()->user()->id_rol == 3);
+        let reciboActual = null;
+        const esClienteAutenticado = @json($rolUsuario === 3);
+        const esColaboradorAutenticado = @json($rolUsuario === 4);
+        const esAdministradorAutenticado = @json($rolUsuario === 1);
         const clienteAutenticado = @json($clienteAutenticado ?? null);
 
         // ========== BUSCAR CLIENTE ==========
@@ -904,7 +987,10 @@
             const selectVehiculo = document.getElementById('vehiculoClienteSelect');
             if (selectVehiculo) {
                 selectVehiculo.addEventListener('change', function() {
-                    document.getElementById('placaVehiculoSeleccionada').value = this.value;
+                    const placaVehiculoSeleccionada = document.getElementById('placaVehiculoSeleccionada');
+                    if (placaVehiculoSeleccionada) {
+                        placaVehiculoSeleccionada.value = this.value;
+                    }
                 });
             }
 
@@ -925,19 +1011,24 @@
 
         // ========== LIMPIAR BÚSQUEDA ==========
         function limpiarBusqueda() {
-            document.getElementById('numDocBusqueda').value = '';
-            document.getElementById('resultadoBusqueda').innerHTML = '';
-            document.getElementById('formularioReserva').style.display = 'none';
+            const numDocBusqueda = document.getElementById('numDocBusqueda');
+            if (numDocBusqueda) numDocBusqueda.value = '';
+            document.getElementById('resultadoBusqueda')?.replaceChildren();
+            document.getElementById('formularioReserva')?.style.setProperty('display', 'none');
             clienteEncontrado = null;
-            document.getElementById('clienteId').value = '';
-            document.getElementById('selectColaborador').selectedIndex = 0;
-            document.getElementById('selectTipoVehiculo').selectedIndex = 0;
-            document.getElementById('selectServicio').innerHTML = '<option value="">Selecciona un servicio...</option>';
-            document.getElementById('precioMostrado').textContent = '$ 0';
-            document.getElementById('placaVehiculoSeleccionada').value = '';
+            const clienteId = document.getElementById('clienteId');
+            if (clienteId) clienteId.value = '';
+            if (document.getElementById('selectColaborador')) document.getElementById('selectColaborador').selectedIndex = 0;
+            if (document.getElementById('selectTipoVehiculo')) document.getElementById('selectTipoVehiculo').selectedIndex = 0;
+            if (document.getElementById('selectServicio')) document.getElementById('selectServicio').innerHTML = '<option value="">Selecciona un servicio...</option>';
+            document.getElementById('precioMostrado')?.replaceChildren(document.createTextNode('$ 0'));
+            const placaVehiculoSeleccionada = document.getElementById('placaVehiculoSeleccionada');
+            if (placaVehiculoSeleccionada) placaVehiculoSeleccionada.value = '';
             vehiculosCliente = [];
-            document.getElementById('fechaReserva').value = '';
-            document.getElementById('horaReserva').value = '';
+            const fechaReserva = document.getElementById('fechaReserva');
+            const horaReserva = document.getElementById('horaReserva');
+            if (fechaReserva) fechaReserva.value = '';
+            if (horaReserva) horaReserva.value = '';
         }
 
         // ========== CREAR RESERVA ==========
@@ -1003,9 +1094,11 @@
             try {
                 const response = await fetch('/api/reservas', {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                     },
                     body: JSON.stringify(payload)
                 });
@@ -1028,15 +1121,18 @@
 
         // ========== LIMPIAR BÚSQUEDA ==========
         function limpiarBusqueda() {
-            document.getElementById('numDocBusqueda').value = '';
-            document.getElementById('resultadoBusqueda').innerHTML = '';
-            document.getElementById('formularioReserva').style.display = 'none';
+            const numDocBusqueda = document.getElementById('numDocBusqueda');
+            if (numDocBusqueda) numDocBusqueda.value = '';
+            document.getElementById('resultadoBusqueda')?.replaceChildren();
+            document.getElementById('formularioReserva')?.style.setProperty('display', 'none');
             clienteEncontrado = null;
-            document.getElementById('clienteId').value = '';
-            document.getElementById('selectColaborador').selectedIndex = 0;
-            document.getElementById('selectTipoVehiculo').selectedIndex = 0;
-            document.getElementById('selectServicio').innerHTML = '<option value="">Selecciona un servicio...</option>';
-            document.getElementById('precioMostrado').textContent = '$ 0';
+            const clienteId = document.getElementById('clienteId');
+            if (clienteId) clienteId.value = '';
+            if (document.getElementById('selectColaborador')) document.getElementById('selectColaborador').selectedIndex = 0;
+            if (document.getElementById('selectTipoVehiculo')) document.getElementById('selectTipoVehiculo').selectedIndex = 0;
+            if (document.getElementById('selectServicio')) document.getElementById('selectServicio').innerHTML = '<option value="">Selecciona un servicio...</option>';
+            const precioMostrado = document.getElementById('precioMostrado');
+            if (precioMostrado) precioMostrado.textContent = '$ 0';
         }
 
         // ========== CARGAR COLABORADORES ==========
@@ -1218,6 +1314,7 @@
                     hora
                 });
                 const response = await fetch(`/api/reservas/disponibilidad?${parametros}`, {
+                    credentials: 'same-origin',
                     headers: {
                         'Accept': 'application/json'
                     }
@@ -1327,7 +1424,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                     },
                     body: JSON.stringify(payload)
                 });
@@ -1356,6 +1454,7 @@
                 const fecha = actualDay.toISOString().split('T')[0];
                 const response = await fetch(`/api/reservas/fecha/${fecha}`, {
                     method: 'GET',
+                    credentials: 'same-origin',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -1437,7 +1536,12 @@
                                         <div class="servicio">${servicio} - $ ${precio}</div>
                                         <div class="tiempo">${reserva.fecha || ''} ${reserva.hora || ''}</div>
                                     </div>
-                                    <span class="badge-completado">Finalizado</span>
+                                    <div class="text-end">
+                                        <span class="badge-completado d-block mb-2">Finalizado</span>
+                                        ${!esColaboradorAutenticado ? `<button type="button" class="btn btn-sm btn-outline-success" onclick="abrirRecibo(${reserva.id_reserva})">
+                                            <i class="bi bi-receipt me-1"></i>Ver recibo
+                                        </button>` : ''}
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -1456,9 +1560,27 @@
         function generarBotonEtapa(idReserva, etapa) {
             let botonAccion = '';
 
+            if (esColaboradorAutenticado) {
+                if (etapa === 'Activa') {
+                    return `<button class="btn-iniciar-lavado" onclick="cambiarEtapaReserva(${idReserva}, 'iniciar')">
+                        <i class="bi bi-droplet-fill me-1"></i>Iniciar
+                    </button>`;
+                }
+
+                if (etapa === 'En Proceso') {
+                    return `<button class="btn-finalizar" onclick="cambiarEtapaReserva(${idReserva}, 'finalizar')">
+                        <i class="bi bi-check-circle-fill me-1"></i>Finalizar
+                    </button>`;
+                }
+
+                return '';
+            }
+
             if (esClienteAutenticado) {
                 if (etapa === 'Pendiente') {
-                    botonAccion = `<button class="btn-activar" onclick="cambiarEtapaReserva(${idReserva}, 'activar')">
+                    botonAccion = `<button class="btn btn-sm btn-outline-primary me-1" onclick="abrirEdicionReserva(${idReserva})">
+                        <i class="bi bi-pencil me-1"></i>Editar
+                    </button><button class="btn-activar" onclick="cambiarEtapaReserva(${idReserva}, 'activar')">
                         <i class="bi bi-play-fill me-1"></i>Activar
                     </button>`;
                 }
@@ -1469,12 +1591,22 @@
                     </button>`;
                 }
 
+                if (etapa === 'Finalizada') {
+                    return `<button class="btn btn-sm btn-outline-success" onclick="abrirRecibo(${idReserva})"><i class="bi bi-receipt me-1"></i>Recibo</button>`;
+                }
+
                 return '';
+            }
+
+            if (esAdministradorAutenticado && etapa === 'Pendiente') {
+                botonAccion += `<button class="btn btn-sm btn-outline-primary me-1" onclick="abrirEdicionReserva(${idReserva})">
+                    <i class="bi bi-pencil me-1"></i>Editar
+                </button>`;
             }
 
             switch (etapa) {
                 case 'Pendiente':
-                    botonAccion = `<button class="btn-activar" onclick="cambiarEtapaReserva(${idReserva}, 'activar')">
+                    botonAccion += `<button class="btn-activar" onclick="cambiarEtapaReserva(${idReserva}, 'activar')">
                         <i class="bi bi-play-fill me-1"></i>Activar
                     </button>`;
                     break;
@@ -1492,7 +1624,9 @@
                     break;
 
                 case 'Finalizada':
-                    return '';
+                    return esAdministradorAutenticado ?
+                        `<button class="btn btn-sm btn-outline-success" onclick="abrirRecibo(${idReserva})"><i class="bi bi-receipt me-1"></i>Recibo</button>` :
+                        '';
 
                 case 'Cancelada':
                     return '';
@@ -1543,6 +1677,7 @@
             try {
                 const response = await fetch(accionInfo.url, {
                     method: 'PUT',
+                    credentials: 'same-origin',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -1565,9 +1700,57 @@
             }
         }
 
+        async function cargarMetodosPago() {
+            const contenedor = document.getElementById('metodosPago');
+
+            if (!contenedor || contenedor.dataset.cargado === 'true') return;
+
+            try {
+                const response = await fetch('/api/metodos-pago', {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'No se pudieron cargar los métodos de pago');
+                }
+
+                const metodos = (result.data || []).filter(metodo =>
+                    metodo.estado_metodo_pago === undefined || Boolean(Number(metodo.estado_metodo_pago))
+                );
+                contenedor.replaceChildren();
+
+                metodos.forEach(metodo => {
+                    const label = document.createElement('label');
+                    label.className = 'payment-option d-flex align-items-center gap-2';
+                    label.innerHTML = `
+                        <input class="form-check-input mt-0" type="radio" name="metodoPago" value="${metodo.id_metodo_pago}">
+                        <span><i class="bi bi-credit-card me-2"></i>${metodo.nombre_metodo_pago}</span>
+                    `;
+                    contenedor.appendChild(label);
+                });
+
+                if (metodos.length === 0) {
+                    contenedor.innerHTML = '<div class="text-muted small">No hay métodos de pago disponibles</div>';
+                } else {
+                    contenedor.dataset.cargado = 'true';
+                    contenedor.querySelector('input[name="metodoPago"]').checked = true;
+                }
+            } catch (error) {
+                contenedor.innerHTML = '<div class="text-danger small">Error al cargar métodos de pago</div>';
+                throw error;
+            }
+        }
+
         async function abrirModalPago(idReserva) {
             try {
+                await cargarMetodosPago();
                 const response = await fetch(`/api/reservas/${idReserva}`, {
+                    credentials: 'same-origin',
                     headers: {
                         'Accept': 'application/json'
                     }
@@ -1591,13 +1774,22 @@
         async function confirmarPago() {
             if (!reservaPendienteDePago) return;
 
-            const metodoPago = document.querySelector('input[name="metodoPago"]:checked')?.value;
+            const metodoSeleccionado = document.querySelector('input[name="metodoPago"]:checked');
+            const idMetodoPago = Number(metodoSeleccionado?.value || 0);
+            const metodoPago = metodoSeleccionado?.closest('label')?.querySelector('span')?.textContent?.trim() || '';
+
+            if (!idMetodoPago) {
+                alert('Selecciona un método de pago');
+                return;
+            }
+
             const boton = document.getElementById('btnConfirmarPago');
             boton.disabled = true;
 
             try {
                 const response = await fetch(`/api/reservas/${reservaPendienteDePago.id_reserva}/finalizar`, {
                     method: 'PUT',
+                    credentials: 'same-origin',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -1610,9 +1802,30 @@
                     throw new Error(result.error || result.message || 'No se pudo finalizar la reserva');
                 }
 
+                const comprobanteResponse = await fetch('/api/comprobantes-pago', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    },
+                    body: JSON.stringify({
+                        id_reserva: reservaPendienteDePago.id_reserva,
+                        id_metodo_pago: idMetodoPago
+                    })
+                });
+                const comprobanteResult = await comprobanteResponse.json();
+
+                if (!comprobanteResponse.ok) {
+                    throw new Error(comprobanteResult.error || comprobanteResult.message ||
+                        'La reserva finalizó, pero no se pudo registrar el comprobante');
+                }
+
                 const reservaFinalizada = {
                     ...reservaPendienteDePago,
-                    ...(result.data || {})
+                    ...(result.data || {}),
+                    comprobante_pago: comprobanteResult.data
                 };
                 bootstrap.Modal.getInstance(document.getElementById('modalPagoReserva'))?.hide();
                 mostrarRecibo(reservaFinalizada, metodoPago);
@@ -1626,6 +1839,7 @@
         }
 
         function mostrarRecibo(reserva, metodoPago) {
+            reciboActual = reserva;
             const usuario = reserva.cliente?.usuario || {};
             const nombreCliente = `${usuario.nombre_usuario || ''} ${usuario.apellido_usuario || ''}`.trim() || 'Sin nombre';
             const precio = Number(reserva.servicio?.costo_servicio || 0);
@@ -1643,10 +1857,49 @@
             bootstrap.Modal.getOrCreateInstance(document.getElementById('modalReciboReserva')).show();
         }
 
+        async function abrirRecibo(idReserva) {
+            try {
+                const response = await fetch(`/api/comprobantes-pago/reserva/${idReserva}`, {
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'No se pudo consultar el recibo');
+                }
+
+                const comprobante = result.data;
+                const reserva = comprobante.reserva || {};
+                reserva.comprobante_pago = comprobante;
+                mostrarRecibo(reserva, comprobante.metodo_pago?.nombre_metodo_pago || 'No especificado');
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        }
+
+        function descargarRecibo() {
+            if (!reciboActual) return;
+
+            const contenido = document.querySelector('#modalReciboReserva .receipt')?.innerHTML || '';
+            const ventana = window.open('', '_blank');
+            ventana.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Recibo #${reciboActual.id_reserva}</title>
+                <style>body{font-family:Arial,sans-serif;padding:32px;color:#222}h1{font-size:20px}.receipt-row{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:10px 0}.receipt-label{font-weight:600}</style>
+                </head><body><h1>Recibo de servicio</h1>${contenido}</body></html>`);
+            ventana.document.close();
+            ventana.focus();
+            ventana.print();
+        }
+
         // ========== INICIALIZAR ==========
         document.addEventListener('DOMContentLoaded', function() {
-            cargarColaboradores();
-            cargarTiposVehiculo();
+            if (!esColaboradorAutenticado) {
+                cargarColaboradores();
+                cargarTiposVehiculo();
+            }
             cargarReservasHoy();
 
             if (esClienteAutenticado) {
@@ -1659,12 +1912,12 @@
                 }
             }
 
-            document.getElementById('selectColaborador').addEventListener('change', actualizarDisponibilidad);
-            document.getElementById('fechaReserva').addEventListener('change', actualizarDisponibilidad);
-            document.getElementById('horaReserva').addEventListener('change', actualizarDisponibilidad);
+            document.getElementById('selectColaborador')?.addEventListener('change', actualizarDisponibilidad);
+            document.getElementById('fechaReserva')?.addEventListener('change', actualizarDisponibilidad);
+            document.getElementById('horaReserva')?.addEventListener('change', actualizarDisponibilidad);
 
             // Permitir buscar con Enter
-            document.getElementById('numDocBusqueda').addEventListener('keypress', function(e) {
+            document.getElementById('numDocBusqueda')?.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     buscarCliente();

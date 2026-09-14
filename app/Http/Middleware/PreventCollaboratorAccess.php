@@ -5,11 +5,11 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class PreventClientAccess
+class PreventCollaboratorAccess
 {
     public function handle(Request $request, Closure $next)
     {
-        if (in_array((int) $request->user()?->id_rol, [3, 4], true)) {
+        if ((int) $request->user()?->id_rol === 4) {
             abort(403, 'No tienes permisos para acceder a este módulo.');
         }
 

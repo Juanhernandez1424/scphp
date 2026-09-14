@@ -5,9 +5,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administración - Lavadero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'PT Serif', serif;
+            font-weight: 400;
+        }
+
+        .module-content {
+            padding: 2rem 2.25rem !important;
+        }
+
+        .module-title {
+            font-family: 'PT Serif', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 768px) {
+            .module-content {
+                padding: 1.25rem 1rem !important;
+            }
+        }
+
+        h2.mb-1 {
+            font-size: 2rem;
+        }
+
         .gerencia-submodulos {
             align-items: stretch;
             border-bottom: 0;
@@ -106,9 +145,9 @@
     <div class="d-flex">
         <x-sidebar />
 
-        <div class="flex-grow-1 p-4" style="background-color: #f8f9fa; min-height: 100vh;">
+        <div class="flex-grow-1 module-content" style="background-color: #f8f9fa; min-height: 100vh;">
             <div class="mb-4">
-                <h2 class="mb-1">Administración</h2>
+                <h1 class="module-title mb-1">Administración</h1>
                 <p class="text-muted">Configura empleados, servicios, precios y clientes del lavadero</p>
             </div>
 

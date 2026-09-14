@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\ComprobantePagoController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,15 +21,19 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        if (Auth::user()->id_rol == 3) {
+        if (in_array((int) Auth::user()->id_rol, [3, 4], true)) {
             return redirect()->route('reservas');
         }
 
         return view('components.dashboard');
     })->name('dashboard');
 
+    Route::get('/api/dashboard/metricas', [DashboardController::class, 'metricas'])
+        ->name('api.dashboard.metricas');
+
     // Ruta principal para ver la lista/vista de reservas
     Route::get('/reservas', function () {
+        $rolUsuario = (int) Auth::user()->id_rol;
         $cliente = Auth::user()->id_rol == 3
             ? Auth::user()->cliente()->with(['usuario', 'vehiculo'])->first()
             : null;
@@ -48,15 +54,27 @@ Route::middleware('auth')->group(function () {
             ])->values()
         ] : null;
 
-        return view('reservas.reservas', compact('clienteAutenticado'));
+        return view('reservas.reservas', compact('clienteAutenticado', 'rolUsuario'));
     })->name('reservas');
 
     // Ruta diferente para la vista del formulario de creación
-    Route::get('/reservas/crear', [ReservaController::class, 'create'])->name('reservas.create');
+    Route::get('/reservas/crear', [ReservaController::class, 'create'])
+        ->middleware('prevent.client')
+        ->name('reservas.create');
+
+    Route::get('/api/reservas/fecha/{fecha}', [ReservaController::class, 'getByDate']);
+    Route::get('/api/reservas/disponibilidad', [ReservaController::class, 'disponibilidad']);
+    Route::put('/api/reservas/{id}/activar', [ReservaController::class, 'activarReserva']);
+    Route::put('/api/reservas/{id}/iniciar', [ReservaController::class, 'iniciarReserva']);
+    Route::put('/api/reservas/{id}/finalizar', [ReservaController::class, 'finalizarReserva']);
+    Route::post('/api/comprobantes-pago', [ComprobantePagoController::class, 'store']);
+    Route::get('/api/comprobantes-pago/reserva/{idReserva}', [ComprobantePagoController::class, 'show']);
+    Route::put('/api/reservas/{id}/cancelar', [ReservaController::class, 'cancelarReserva']);
+    Route::apiResource('/api/reservas', ReservaController::class)->names('api.reservas');
 
     Route::get('/novedades-cliente', function () {
         return view('components.novedades-cliente');
-    })->name('novedades-cliente');
+    })->middleware('prevent.collaborator')->name('novedades-cliente');
 
     Route::get('/novedades-interno', function () {
         return view('components.novedades-interno');
@@ -78,14 +96,6 @@ Route::middleware('auth')->group(function () {
         return view('gerencia.gerencia');
     })->middleware('prevent.client')->name('gerencia.servicios');
 });
-
-// Route::view('/novedades', 'components.novedades')->name('novedades');
-// Route::view('/novedades-cliente', 'components.novedades-cliente')->name('cliente');
-
-
-
-
-
 
 Route::post('/logout', [AuthController::class, 'destroy'])
     ->middleware('auth')

@@ -4,6 +4,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AdministradorController;
 use App\Http\Controllers\ColaboradorController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ComprobantePagoController;
 use App\Http\Controllers\CoordinadorController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\VehiculoController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\NovedadController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TipoVehiculoController;
 use App\Http\Controllers\PlanController;
+use App\Http\Controllers\MetodoPagoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,14 +44,6 @@ Route::apiResource('coordinadores', CoordinadorController::class);
 
 Route::apiResource('vehiculos', VehiculoController::class);
 
-Route::get('/reservas/fecha/{fecha}', [ReservaController::class, 'getByDate']);
-Route::get('/reservas/disponibilidad', [ReservaController::class, 'disponibilidad']);
-Route::put('/reservas/{id}/activar', [ReservaController::class, 'activarReserva']);
-Route::put('/reservas/{id}/iniciar', [ReservaController::class, 'iniciarReserva']);
-Route::put('/reservas/{id}/finalizar', [ReservaController::class, 'finalizarReserva']);
-Route::put('/reservas/{id}/cancelar', [ReservaController::class, 'cancelarReserva']);
-Route::apiResource('reservas', ReservaController::class);
-
 Route::apiResource('novedades', NovedadController::class);
 
 Route::apiResource('tipo-vehiculo', TipoVehiculoController::class);
@@ -57,3 +51,6 @@ Route::apiResource('tipo-vehiculo', TipoVehiculoController::class);
 Route::get('/servicios/tipo-vehiculo/{idTipoVehiculo}', [ServicioController::class, 'getByTipoVehiculo']);
 Route::apiResource('servicios', ServicioController::class);
 Route::apiResource('planes', PlanController::class);
+Route::apiResource('metodos-pago', MetodoPagoController::class);
+Route::get('/comprobantes-pago/reserva/{idReserva}', [ComprobantePagoController::class, 'show']);
+Route::apiResource('comprobantes-pago', ComprobantePagoController::class);
