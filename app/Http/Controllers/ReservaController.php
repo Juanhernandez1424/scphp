@@ -24,7 +24,10 @@ class ReservaController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $reservas = $this->reservaService->getAll($this->colaboradorAutenticadoId());
+            $reservas = $this->reservaService->getAll(
+                $this->colaboradorAutenticadoId(),
+                $this->clienteAutenticadoId()
+            );
             return response()->json([
                 'success' => true,
                 'message' => 'Lista de reservas obtenida correctamente',
@@ -105,7 +108,8 @@ class ReservaController extends Controller
         try {
             $reserva = $this->reservaService->getById(
                 (int) $id,
-                $this->colaboradorAutenticadoId()
+                $this->colaboradorAutenticadoId(),
+                $this->clienteAutenticadoId()
             );
             return response()->json([
                 'success' => true,
@@ -130,7 +134,11 @@ class ReservaController extends Controller
     public function getByDate($fecha): JsonResponse
     {
         try {
-            $reservas = $this->reservaService->getByDate($fecha, $this->colaboradorAutenticadoId());
+            $reservas = $this->reservaService->getByDate(
+                $fecha,
+                $this->colaboradorAutenticadoId(),
+                $this->clienteAutenticadoId()
+            );
             return response()->json([
                 'success' => true,
                 'message' => 'Reservas obtenidas correctamente',
@@ -314,6 +322,21 @@ class ReservaController extends Controller
         }
 
         return (int) $colaboradorId;
+    }
+
+    private function clienteAutenticadoId(): ?int
+    {
+        if ((int) Auth::user()?->id_rol !== 3) {
+            return null;
+        }
+
+        $clienteId = Auth::user()->cliente?->no_documento_cliente;
+
+        if ($clienteId === null) {
+            abort(403, 'El usuario no tiene un cliente asociado.');
+        }
+
+        return (int) $clienteId;
     }
 
     private function rechazarColaborador(): void

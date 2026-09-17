@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReservaService
 {
-    public function getAll(?int $colaboradorId = null)
+    public function getAll(?int $colaboradorId = null, ?int $clienteId = null)
     {
         $query = Reserva::with([
             'cliente',
@@ -27,11 +27,18 @@ class ReservaService
             $query->where('no_documento_colaborador', $colaboradorId);
         }
 
+        if ($clienteId !== null) {
+            $query->where('no_documento_cliente', $clienteId);
+        }
+
         return $query->orderBy('id_reserva', 'desc')->get();
     }
 
-    public function getById(int $idReserva, ?int $colaboradorId = null): Reserva
-    {
+    public function getById(
+        int $idReserva,
+        ?int $colaboradorId = null,
+        ?int $clienteId = null
+    ): Reserva {
         return Reserva::with([
             'cliente',
             'vehiculo',
@@ -41,10 +48,11 @@ class ReservaService
             'tipoVehiculo'
         ])
             ->when($colaboradorId !== null, fn($query) => $query->where('no_documento_colaborador', $colaboradorId))
+            ->when($clienteId !== null, fn($query) => $query->where('no_documento_cliente', $clienteId))
             ->findOrFail($idReserva);
     }
 
-    public function getByDate(string $fecha, ?int $colaboradorId = null)
+    public function getByDate(string $fecha, ?int $colaboradorId = null, ?int $clienteId = null)
     {
         $query = Reserva::with([
             'cliente',
@@ -57,6 +65,10 @@ class ReservaService
 
         if ($colaboradorId !== null) {
             $query->where('no_documento_colaborador', $colaboradorId);
+        }
+
+        if ($clienteId !== null) {
+            $query->where('no_documento_cliente', $clienteId);
         }
 
         return $query->orderBy('hora', 'desc')->get();

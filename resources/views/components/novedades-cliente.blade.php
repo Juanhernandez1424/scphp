@@ -299,7 +299,7 @@
 
                 const reservas = todasLasReservas.filter(r =>
                     r.etapa_lavado === 'Finalizada' &&
-                    (!clienteAutenticadoId || r.no_documento_cliente == clienteAutenticadoId)
+                    r.no_documento_cliente == clienteAutenticadoId
                 );
 
                 reservasCache = reservas;

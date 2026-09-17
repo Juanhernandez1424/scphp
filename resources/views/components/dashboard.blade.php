@@ -153,7 +153,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const fecha = new Date().toISOString().split('T')[0];
+            const ahora = new Date();
+            const fecha = [
+                ahora.getFullYear(),
+                String(ahora.getMonth() + 1).padStart(2, '0'),
+                String(ahora.getDate()).padStart(2, '0')
+            ].join('-');
             const selectorFecha = document.getElementById('fechaMetricas');
             selectorFecha.value = fecha;
             cargarMetricas(fecha);
